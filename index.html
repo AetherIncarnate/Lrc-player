@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Music</title>
+<title>Cadenza</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:#0a0a0c;color:#fff;font-family:-apple-system,'SF Pro Display','SF Pro Text','Inter',BlinkMacSystemFont,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
@@ -67,6 +67,8 @@ button:focus-visible{outline:2px solid rgba(255,255,255,.5);outline-offset:2px;b
 
 /* seek */
 #seek-wrap{width:100%;max-width:340px}
+.seekbar{touch-action:none}
+.seekbar.scrubbing{height:9px}
 .seekbar{height:8px;background:rgba(255,255,255,.16);border-radius:99px;cursor:pointer;position:relative;margin-bottom:10px;box-shadow:inset 0 1px 2px rgba(0,0,0,.35)}
 .seekfill{height:100%;border-radius:99px;background:#ff2d55;width:0%;pointer-events:none;transition:background .5s}
 .time-row{display:flex;justify-content:space-between;font-size:11px;font-weight:500;color:rgba(255,255,255,.45)}
@@ -983,27 +985,122 @@ body.kawarp #shell,body.kawarp #main{background:transparent}
 @media(prefers-reduced-motion:reduce){#kwp-bg,#kwp-np{display:none!important}}
 
 
-/* ═══ v45 · Spicy Lyrics style — front & center, word-by-word reveal ═══ */
-body.spicy #right{mask-image:linear-gradient(to bottom,transparent,#000 13%,#000 85%,transparent)}
-body.spicy .lrc-line{padding-bottom:32px;transition:opacity .3s ease,transform .5s cubic-bezier(.2,.8,.2,1)}
-body.spicy .lrc-line .words-row{justify-content:center!important}
-body.spicy .lrc-line{text-align:center!important}
-body.spicy .lrc-word{font-size:clamp(22px,2.7vw,38px);font-weight:600;line-height:1.5;letter-spacing:-.01em;transform:none;animation:none}
-body.spicy .lrc-word:active{transform:scale(.95)}
-body.spicy .w-dim{color:rgba(255,255,255,.34);transition:color .45s ease}
-body.spicy .state-p1 .w-dim{color:rgba(255,255,255,.52)}
-body.spicy .state-p2 .w-dim{color:rgba(255,255,255,.42)}
-body.spicy .state-far .w-dim{color:rgba(255,255,255,.2)}
-body.spicy .w-bright{color:#fff}
-body.spicy .state-cur .w-bright{text-shadow:0 0 28px rgba(255,255,255,.38)}
-body.spicy .lrc-line.state-cur{opacity:1;transform:scale(1)}
-body.spicy .lrc-line.state-p1,body.spicy .lrc-line.state-n1{opacity:.88;transform:scale(.995)}
-body.spicy .lrc-line.state-p2,body.spicy .lrc-line.state-n2{opacity:.6;transform:scale(.99)}
-body.spicy .lrc-line.state-far{opacity:.32;transform:scale(.985)}
-body.spicy .vtag{display:none}
+/* ═══ v48 · Spicy Lyrics v2 — front & center, minimal ═══
+   One line owns the screen: crisp white with a soft 18% feathered sweep;
+   neighbours recede hard (.38 / .2 / .12) so nothing competes. Smaller
+   fluid type, generous air, no scale gimmicks. */
+body.spicy #right{container-type:inline-size;mask-image:linear-gradient(to bottom,transparent,#000 12%,#000 86%,transparent)}
+body.spicy .lrc-line{padding:0;margin:1.8cqw 0;text-align:left!important;transform-origin:left center;
+  line-height:1.35;opacity:.12;will-change:opacity;
+  transition:opacity .3s cubic-bezier(.61,1,.88,1)}
+body.spicy .lrc-line.state-cur{opacity:1}
+body.spicy .lrc-line.state-p1{opacity:.38}
+body.spicy .lrc-line.state-p2{opacity:.2}
+body.spicy .lrc-line.state-n1{opacity:.38}
+body.spicy .lrc-line.state-n2{opacity:.2}
+body.spicy .lrc-line.state-far{opacity:.12}
+body.spicy .lrc-line .words-row{justify-content:flex-start!important;flex-wrap:wrap;row-gap:.8cqw}
+body.spicy .lrc-word{font-size:calc(clamp(1.35rem,4.4cqw,2.3rem)*var(--lyric-scale,1));font-weight:600;line-height:1.35;
+  letter-spacing:-.015em;margin:0 .14ch;padding:0;transform:none;animation:none;transition:none;cursor:pointer}
+body.spicy .lrc-word .w-dim{display:block;color:rgba(255,255,255,.30);transition:color .3s cubic-bezier(.61,1,.88,1)}
+body.spicy .lrc-word .w-bright{display:block;color:transparent;clip-path:none;
+  background-image:linear-gradient(90deg,#fff var(--gp,0%),rgba(255,255,255,.30) calc(var(--gp,0%) + 18%));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  transition:none;will-change:background-image}
+body.spicy .lrc-word.singing .w-bright{text-shadow:0 0 12px rgba(255,255,255,.42)}
+body.spicy .lrc-word:active{transform:scale(.96)}
 body.spicy .metro-letters{display:none}
-body.spicy .lrc-word .w-dim{display:block}
-body.spicy .lrc-word .w-bright{display:block}
+body.spicy .vtag{display:none}
+.spicy-break{display:none}
+body.spicy .spicy-break{display:flex;justify-content:center;align-items:center;gap:1.1cqw;margin:2cqw 0;opacity:.4}
+body.spicy .spicy-break i{width:1.1cqw;height:1.1cqw;min-width:3px;min-height:3px;border-radius:50%;background:rgba(255,255,255,.6)}
+@media(max-width:879px){body.spicy .lrc-word{font-size:calc(clamp(1.15rem,4.2vw,1.65rem)*var(--lyric-scale,1))}}
+
+/* ═══ v47 · Apple-style glide scroll + hover scrollbar (lyric panel) ═══ */
+#right{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent}
+#right::-webkit-scrollbar{width:0}
+#right:hover::-webkit-scrollbar{width:8px}
+#right::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:5px}
+
+/* ═══ v47 · responsive: two-column Now Playing on wide screens ═══ */
+@media(min-width:880px){
+  #app.am-np{flex-direction:row!important}
+  #app.am-np #left{flex:0 0 46%;width:46%;max-width:none!important;justify-content:safe center!important;
+    padding:70px 30px 20px!important;overflow-y:auto}
+  #app.am-np #right{flex:1 1 auto;min-width:0;container-type:inline-size}
+  .am-np .lrc-word{font-size:calc(clamp(1.6rem,4.6cqw,2.3rem)*var(--lyric-scale,1))}
+  body.spicy .lrc-word{font-size:calc(clamp(1.85rem,6.2cqw,3.5rem)*var(--lyric-scale,1))}
+}
+@media(min-width:880px){
+  /* v49 · spicy matches the reference: lyrics left, art card bottom-right */
+  body.spicy #app.am-np{flex-direction:row-reverse!important}
+  body.spicy #app.am-np #left{flex:0 0 36%;width:36%;justify-content:flex-end!important}
+}
+@media(min-width:880px) and (max-height:840px){
+  #app.am-np #art-wrap{width:min(46vh,330px)}
+  #app.am-np #left{gap:12px!important;padding:56px 30px 14px!important}
+  #app.am-np #transport{gap:24px!important}
+}
+
+/* ═══ v47 · responsive: view headers clear the back button ═══ */
+.am-view-inner>h1{padding-left:64px}
+
+/* ═══ v48 · fullscreen artwork ═══ */
+#art-full{position:fixed;inset:0;z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;gap:24px}
+#art-full.open{display:flex}
+#art-full-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(70px) saturate(1.4) brightness(.42);transform:scale(1.25)}
+#art-full-bg::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.35)}
+#art-full-img{position:relative;z-index:1;width:min(72vh,78vw,560px);aspect-ratio:1;border-radius:20px;box-shadow:0 40px 100px rgba(0,0,0,.65);object-fit:cover}
+#art-full-cap{position:relative;z-index:1;text-align:center;color:#fff;pointer-events:none}
+#art-full-title{font-size:26px;font-weight:700;letter-spacing:-.02em}
+#art-full-artist{font-size:17px;color:rgba(235,235,245,.65);margin-top:6px}
+#art-full .am-back{position:absolute;top:16px;left:16px;z-index:2}
+#art-wrap{cursor:pointer;transition:transform .25s cubic-bezier(.34,1.3,.64,1)}
+#art-wrap:active{transform:scale(.985)}
+
+/* ═══ v48 · equalizer ═══ */
+#sound-panel{margin-top:22px}
+#sound-panel h4{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(235,235,245,.45);margin:0 0 14px}
+.eq-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.eq-preset{display:flex;align-items:center;gap:10px;font-size:13.5px;color:rgba(235,235,245,.75)}
+.eq-preset select{background:rgba(255,255,255,.08)!important;border:0!important;border-radius:9px!important;color:#fff;padding:6px 10px;font-size:13px}
+.eq-row{display:flex;justify-content:space-between;gap:10px;padding:6px 4px 0}
+.eq-band{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1}
+.eq-band input[type=range]{-webkit-appearance:none;appearance:none;width:34px;height:88px;background:transparent;cursor:pointer;
+  writing-mode:vertical-lr;direction:rtl}
+.eq-band input[type=range]::-webkit-slider-runnable-track{width:4px;background:rgba(255,255,255,.22);border-radius:2px}
+.eq-band input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.5);margin-left:-9px}
+.eq-val{font-size:11px;color:rgba(235,235,245,.55);font-variant-numeric:tabular-nums;min-height:13px}
+.eq-freq{font-size:10.5px;font-weight:600;color:rgba(235,235,245,.4)}
+#sound-panel small{display:block;margin-top:10px;font-size:12px;color:rgba(235,235,245,.4);line-height:1.5}
+
+/* ═══ v47 · responsive: compact layout stacking (≤879) ═══ */
+@media(max-width:879px){
+  #mini-player{bottom:calc(88px + env(safe-area-inset-bottom))}
+  .am-view{padding-bottom:170px}
+  body.view-library #view-library{padding-bottom:170px}
+  body.settings-open #tabbar{display:none}
+  .am-np #right{padding:4px 18px 210px!important}
+  .am-np .lrc-word{font-size:calc(clamp(1.35rem,4.8vw,1.9rem)*var(--lyric-scale,1))}
+}
+
+
+/* ═══ v46 · back buttons ═══ */
+.am-back{position:absolute;top:14px;left:14px;z-index:8;width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.16);
+  background:rgba(18,14,26,.46);color:#fff;cursor:pointer;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  transition:background .2s ease,transform .2s ease}
+.am-back:hover{background:rgba(255,255,255,.16)}
+.am-back:active{transform:scale(.92)}
+.am-back .sym{width:20px;height:20px}
+.settings-head{position:relative}
+.sheet-close{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,.16);background:rgba(18,14,26,.46);color:#fff;cursor:pointer;
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);transition:background .2s ease,transform .2s ease;flex:0 0 auto}
+.sheet-close:hover{background:rgba(255,255,255,.16)}
+.sheet-close:active{transform:scale(.9)}
+.sheet-close .sym{width:14px;height:14px}
 
 </style>
 </head>
@@ -1036,7 +1133,7 @@ body.spicy .lrc-word .w-bright{display:block}
     C 31.83984375,38.994140625 32.333984375,39.595703125 32.333984375,40.34765625
     Z
 '/></g></svg></div>
-    <div class="sb-brand-text"><span class="sb-name">Metro</span><span class="sb-sub">Music</span></div>
+    <div class="sb-brand-text"><span class="sb-name">Cadenza</span><span class="sb-sub">Music</span></div>
   </div>
   <nav class="sb-nav">
     <div class="sb-label">Library</div>
@@ -1432,12 +1529,14 @@ body.spicy .lrc-word .w-bright{display:block}
 </aside>
 <main id="main">
 <section id="view-home" class="am-view" aria-label="Listen Now">
+<button class="am-back" onclick="amBack()" title="Back" aria-label="Back"><svg class='sym' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M15 5.5 8.5 12l6.5 6.5'/></svg></button>
   <div class="am-view-inner">
     <h1 id="home-greeting" class="am-greet">Good evening</h1>
     <div id="home-grid"></div>
   </div>
 </section>
 <section id="view-browse" class="am-view" aria-label="Browse">
+<button class="am-back" onclick="amBack()" title="Back" aria-label="Back"><svg class='sym' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M15 5.5 8.5 12l6.5 6.5'/></svg></button>
   <div class="am-view-inner">
     <div class="am-browse-head"><h1 class="am-title-lg">Browse</h1>
       <div class="am-browse-actions">
@@ -1502,9 +1601,11 @@ body.spicy .lrc-word .w-bright{display:block}
 </section>
 </section>
 <section id="view-albums" class="am-view" aria-label="Albums">
+<button class="am-back" onclick="amBack()" title="Back" aria-label="Back"><svg class='sym' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M15 5.5 8.5 12l6.5 6.5'/></svg></button>
   <div class="am-view-inner"><h1 class="am-title-lg">Albums</h1><div class="am-grid" id="albums-grid"></div></div>
 </section>
 <section id="view-artists" class="am-view" aria-label="Artists">
+<button class="am-back" onclick="amBack()" title="Back" aria-label="Back"><svg class='sym' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M15 5.5 8.5 12l6.5 6.5'/></svg></button>
   <div class="am-view-inner"><h1 class="am-title-lg">Artists</h1><div class="am-grid" id="artists-grid"></div></div>
 </section>
 </main>
@@ -1535,7 +1636,7 @@ body.spicy .lrc-word .w-bright{display:block}
   <div id="left">
     <div id="now-label">Now Playing</div>
 
-    <div id="art-wrap" onclick="pickArt()">
+    <div id="art-wrap" onclick="pickArt()" ondblclick="openArtFull()" title="Double-tap for fullscreen art">
       <img id="art-img" alt="Album art">
       <div id="art-placeholder">
         <svg class='sym' viewBox='0 0 37.833984375 57.169921875'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-57.169921875)'><path fill-rule='nonzero' d='
@@ -2328,9 +2429,15 @@ body.spicy .lrc-word .w-bright{display:block}
 <header><h3 id="pd-title"></h3><button class="round-btn" onclick="closePlaylistDialog()" aria-label="Close playlist dialog">✕</button></header>
 <p id="pd-help"></p><div id="pd-content"></div><footer id="pd-footer"></footer>
 </dialog><div id="toast" role="status" aria-live="polite"></div>
+<div id="art-full" aria-hidden="true">
+  <div id="art-full-bg"></div>
+  <button class="am-back" onclick="closeArtFull()" title="Close" aria-label="Close"><svg class='sym' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M5.5 9 12 15.5 18.5 9'/></svg></button>
+  <img id="art-full-img" alt="">
+  <div id="art-full-cap"><div id="art-full-title"></div><div id="art-full-artist"></div></div>
+</div>
 <div id="scrim" onclick="closeSheet()"></div>
 <aside id="sheet" aria-label="Settings and lyrics">
-<header class="settings-head"><h3>Settings</h3></header>
+<header class="settings-head"><h3>Settings</h3><button class="sheet-close" onclick="closeSheet()" title="Close settings" aria-label="Close settings"><svg class='sym' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round'><path d='M6 6l12 12M18 6 6 18'/></svg></button></header>
     <div id="glass-caption">Gradient glass · On this device</div><p class="sheet-note">Your library, playlists and backup live in the sidebar.</p>
 <div class="settings-body">
 
@@ -2352,7 +2459,12 @@ body.spicy .lrc-word .w-bright{display:block}
         <span>Paste LRC</span>
       </button>
     </div>
-    <section id="cache-tools"><h4>Offline cache</h4><p id="cache-info">Checking storage…</p><div class="lookup-actions"><button class="load-btn" onclick="showCacheStats()">Storage usage</button><button class="load-btn" onclick="clearResponseCache()">Clear lookup cache</button></div><small>Song details, saved lyrics, covers and imported files persist in this browser. API responses expire after 7 days; misses after 30 minutes. Refresh buttons bypass cached responses. Clearing lookup cache keeps your library and its saved artwork/lyrics.</small><p><strong>Audio formats:</strong> FLAC, MP3, WAV, AAC, ALAC, Ogg/Opus, AIFF and more can be imported. Playback depends on browser codecs; importing a file does not convert it.</p></section><section id="art-tools"><label id="cover-auto-label"><input id="auto-cover" type="checkbox" checked> Find missing cover art automatically</label><label><input id="auto-metadata" type="checkbox" checked> Auto-fill missing details (album · year · genre) online</label><div class="lookup-actions"><button class="load-btn" onclick="findCover(true)">Find / retry cover</button><button class="load-btn" onclick="pickArt()">Upload cover</button></div><label>Cover source <select id="cover-source"><option value="auto">Automatic (no MusicBrainz)</option><option value="LRC.red">LRC.red</option><option value="Music-utils">Music-utils</option><option value="TheAudioDB">TheAudioDB</option><option value="Apple / iTunes">Apple / iTunes</option><option value="Deezer">Deezer</option><option value="MusicBrainz / Cover Art Archive">MusicBrainz (optional)</option></select></label><div id="art-status" role="status">Embedded and uploaded artwork take priority.</div><small>Compares LRC.red, Music-utils, TheAudioDB, Apple/iTunes and Deezer; picks the largest matched image tested (not a guarantee of the original master). MusicBrainz is optional and off by default. TheAudioDB uses its public test key (rate-limited, no signup). Online-only images need internet and may not support color extraction. Sends song/artist metadata, never audio.</small></section>
+    <section id="cache-tools"><h4>Offline cache</h4><p id="cache-info">Checking storage…</p><div class="lookup-actions"><button class="load-btn" onclick="showCacheStats()">Storage usage</button><button class="load-btn" onclick="clearResponseCache()">Clear lookup cache</button></div><small>Song details, saved lyrics, covers and imported files persist in this browser. API responses expire after 7 days; misses after 30 minutes. Refresh buttons bypass cached responses. Clearing lookup cache keeps your library and its saved artwork/lyrics.</small><p><strong>Audio formats:</strong> FLAC, MP3, WAV, AAC, ALAC, Ogg/Opus, AIFF and more can be imported. Formats your browser cannot play directly (e.g. OGG in Safari) are automatically converted to WAV so they play everywhere; the original is always kept.</p></section><section id="art-tools"><label id="cover-auto-label"><input id="auto-cover" type="checkbox" checked> Find missing cover art automatically</label><label><input id="auto-metadata" type="checkbox" checked> Auto-fill missing details (album · year · genre) online</label><div class="lookup-actions"><button class="load-btn" onclick="findCover(true)">Find / retry cover</button><button class="load-btn" onclick="pickArt()">Upload cover</button></div><label>Cover source <select id="cover-source"><option value="auto">Automatic (no MusicBrainz)</option><option value="LRC.red">LRC.red</option><option value="Music-utils">Music-utils</option><option value="TheAudioDB">TheAudioDB</option><option value="Apple / iTunes">Apple / iTunes</option><option value="Deezer">Deezer</option><option value="MusicBrainz / Cover Art Archive">MusicBrainz (optional)</option></select></label><div id="art-status" role="status">Embedded and uploaded artwork take priority.</div><small>Compares LRC.red, Music-utils, TheAudioDB, Apple/iTunes and Deezer; picks the largest matched image tested (not a guarantee of the original master). MusicBrainz is optional and off by default. TheAudioDB uses its public test key (rate-limited, no signup). Online-only images need internet and may not support color extraction. Sends song/artist metadata, never audio.</small></section>
+<section id="sound-panel"><h4>Sound</h4>
+<div class="eq-top"><label class="eq-preset">Preset <select id="eq-preset" onchange="eqSetPreset(this.value)"><option>Flat</option><option>Bass boost</option><option>Bass &amp; treble</option><option>Vocal</option><option>Treble boost</option><option>Lo-fi</option></select></label><button class="lib-button" onclick="eqReset()">Reset</button></div>
+<div class="eq-row"><div class="eq-band"><input id="eq-0" type="range" min="-12" max="12" step="1" value="0" orient="vertical" aria-label="EQ 60 Hz" oninput="eqSetBand(0,this.value)"><span class="eq-val" id="eq-d0">0</span><span class="eq-freq">60</span></div><div class="eq-band"><input id="eq-1" type="range" min="-12" max="12" step="1" value="0" orient="vertical" aria-label="EQ 230 Hz" oninput="eqSetBand(1,this.value)"><span class="eq-val" id="eq-d1">0</span><span class="eq-freq">230</span></div><div class="eq-band"><input id="eq-2" type="range" min="-12" max="12" step="1" value="0" orient="vertical" aria-label="EQ 900 Hz" oninput="eqSetBand(2,this.value)"><span class="eq-val" id="eq-d2">0</span><span class="eq-freq">900</span></div><div class="eq-band"><input id="eq-3" type="range" min="-12" max="12" step="1" value="0" orient="vertical" aria-label="EQ 3.6k Hz" oninput="eqSetBand(3,this.value)"><span class="eq-val" id="eq-d3">0</span><span class="eq-freq">3.6k</span></div><div class="eq-band"><input id="eq-4" type="range" min="-12" max="12" step="1" value="0" orient="vertical" aria-label="EQ 12k Hz" oninput="eqSetBand(4,this.value)"><span class="eq-val" id="eq-d4">0</span><span class="eq-freq">12k</span></div></div>
+<small>Real-time 5-band EQ applied as audio plays; your files are never modified.</small>
+</section>
 <section id="extras-panel"><h4>Playback &amp; lyrics</h4>
 <div class="extras-grid"><label>Speed <select id="playback-speed" onchange="setSpeed(this.value)"><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label>
 <label>Sleep timer <select id="sleep-choice" onchange="setSleep(this.value)"><option value="0">Off</option><option value="5">5 minutes</option><option value="15">15 minutes</option><option value="30">30 minutes</option><option value="60">60 minutes</option><option value="end">End of track</option></select></label></div><div id="sleep-status" role="status">Timer off</div>
@@ -2713,7 +2825,7 @@ above as far as the program is concerned.
 <small>Tempo-based animation, not beat detection. Use Set beat here while listening to align the pulse. Sources are listed separately and are never averaged. Variable-tempo songs may drift. Disabled for plain lyrics and reduced-motion mode.</small>
 <label><input type="checkbox" id="hold-enabled" checked> Soft blur on sustained words</label><label><input type="checkbox" id="hl-explicit" checked onchange="applyHlExplicit()"> Underline explicit words</label><label>Start softness after <select id="hold-threshold"><option value=".8">0.8 seconds</option><option value="1.2" selected>1.2 seconds</option><option value="1.8">1.8 seconds</option><option value="2.5">2.5 seconds</option></select></label>
 <details><summary>Optional free GetSongBPM key</summary><p><a href="https://getsongbpm.com/api" target="_blank" rel="noopener noreferrer">Get a free API key / documentation at GetSongBPM</a>. Register your application with an email and keep this required attribution. Browser CORS restrictions may still prevent access.</p><input id="getsong-key" type="password" placeholder="API key (this session only)" aria-label="GetSongBPM API key"><small>Sent only to api.getsong.co using its API-key header; not saved or included in cached request URLs.</small></details>
-</section><section id="timing-tools">Lyric timing: <strong id="timing-value">0.0 s</strong><div class="lookup-actions"><button class="load-btn" onclick="adjustTiming(-.25)">Earlier −0.25s</button><button class="load-btn" onclick="adjustTiming(.25)">Later +0.25s</button><button class="load-btn" onclick="adjustTiming(0,true)">Reset</button></div><small>Use Earlier if lyrics appear late, Later if they appear early. Saved per library track; does not change playback speed.</small></section>
+</section><section id="timing-tools">Lyric timing: <strong id="timing-value">0.00 s</strong><div class="lookup-actions"><button class="load-btn" onclick="adjustTiming(-.25)">Earlier −0.25s</button><button class="load-btn" onclick="adjustTiming(.25)">Later +0.25s</button><button class="load-btn" onclick="adjustTiming(-.05)">Fine −0.05s</button><button class="load-btn" onclick="adjustTiming(.05)">Fine +0.05s</button><button class="load-btn" onclick="adjustTiming(0,true)">Reset</button></div><input type="range" id="timing-slider" min="-2" max="2" step="0.01" value="0" aria-label="Fine lyric offset" style="width:100%;max-width:230px;margin-top:8px;accent-color:#fa233b"><small>Fine slider: −2 s…+2 s in 0.01 s steps · Use Earlier if lyrics appear late, Later if they appear early. Saved per library track; does not change playback speed.</small></section>
 <section id="discovery">
       <label><input id="auto-lyrics" type="checkbox" checked> Auto-find lyrics when a track loads</label>
       <small>Online lookup sends song/artist metadata, not your audio, to lyric providers and Apple search. Turn off for offline use.</small>
@@ -4750,7 +4862,10 @@ async function findTrackDetails(track,duration=0,interactive=false){
   return false;
 }
 function applyAlbumLine(record,meta){
-  const line=[record?.album||meta?.album,record?.year].filter(Boolean).join(' · ');
+  const t=library.find(x=>x.id===currentTrack);
+  const bpm=t?.beatSettings?.bpm||t?.musicAnalysis?.bpm;
+  const key=t?.beatSettings?.key||t?.musicAnalysis?.key;
+  const line=[record?.album||meta?.album,record?.year,bpm?Math.round(bpm)+' BPM':null,key].filter(Boolean).join(' · ');
   const el=document.getElementById('track-album');if(!el)return;
   el.textContent=line;el.style.display=line?'':'none';
 }
@@ -4879,8 +4994,11 @@ function clearArt(){
 function pickArt(){
   const inp=document.createElement('input');
   inp.type='file'; inp.accept='image/*';
-  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;cancelCover();artRevision++;setArt(URL.createObjectURL(f),true);saveCover(f,currentTrack);artStatus('Uploaded cover');};
-  inp.click();
+  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;cancelCover();artRevision++;setArt(URL.createObjectURL(f),true);saveCover(f,currentTrack,true);artStatus('Uploaded cover');inp.remove();};
+  inp.oncancel=()=>inp.remove();
+  inp.style.cssText='position:fixed;top:0;left:0;width:2px;height:2px;opacity:0;pointer-events:none';
+  document.body.appendChild(inp);
+  requestAnimationFrame(()=>inp.click());
 }
 
 /* ═══ COLOR EXTRACT ═══ */
@@ -4932,7 +5050,16 @@ AUD.onplay=()=>{document.getElementById('ico-play').style.display='none';documen
 AUD.onpause=()=>{document.getElementById('ico-play').style.display='block';document.getElementById('ico-pause').style.display='none';};
 function togglePlay(){if(!AUD.getAttribute('src')){const id=currentTrack||queue[0]||library[0]?.id;if(id)playLibraryTrack(id,queue.length?queue:library.map(t=>t.id));else openSheet();return;}if(AUD.error){retryPlayback();return;}if(AUD.paused)safePlay();else {playAttempt++;AUD.pause();playbackMessage('');}}
 function skip(s){AUD.currentTime=Math.max(0,Math.min(AUD.duration||0,AUD.currentTime+s));}
-document.getElementById('seekbar').onclick=function(e){const r=this.getBoundingClientRect();AUD.currentTime=((e.clientX-r.left)/r.width)*(AUD.duration||0);};
+let scrubbing=false,scrubPct=0,lastManualSeekAt=0,_bufT=null,_lastPos=-1;
+(()=>{const bar=document.getElementById('seekbar');
+ const pctAt=x=>{const r=bar.getBoundingClientRect();return Math.max(0,Math.min(1,(x-r.left)/r.width))*100;};
+ let down=false;
+ bar.addEventListener('pointerdown',e=>{if(!Number.isFinite(AUD.duration)||!AUD.duration)return;down=true;try{bar.setPointerCapture(e.pointerId);}catch(_){}scrubbing=true;scrubPct=pctAt(e.clientX);bar.classList.add('scrubbing');e.preventDefault();});
+ bar.addEventListener('pointermove',e=>{if(!down)return;scrubPct=pctAt(e.clientX);});
+ const done=e=>{if(!down)return;down=false;bar.classList.remove('scrubbing');const t=scrubPct/100*(AUD.duration||0);lastManualSeekAt=Date.now();try{AUD.currentTime=Math.max(0,Math.min(AUD.duration||0,t));}catch(_){}scrubbing=false;};
+ bar.addEventListener('pointerup',done);
+ bar.addEventListener('pointercancel',()=>{down=false;bar.classList.remove('scrubbing');scrubbing=false;});
+})();
 
 /* ═══ PASTE MODAL ═══ */
 function openPaste(){document.getElementById('paste-modal').classList.add('open');}
@@ -5129,6 +5256,8 @@ function renderLyrics(){
       ww.appendChild(sp);
     });
     div.appendChild(ww); con.appendChild(div);
+    const nx=lines[li+1];
+    if(nx&&nx.time-line.time>=4){const br=document.createElement('div');br.className='spicy-break';br.setAttribute('aria-hidden','true');br.innerHTML='<i></i><i></i><i></i>';con.appendChild(br);}
   });
   lyricLineEls=[...con.querySelectorAll('.lrc-line')];
   if(typeof updateRomanisation==='function')updateRomanisation();
@@ -5174,12 +5303,15 @@ function lineState(dist){
 const ALL_STATES=['state-cur','state-p1','state-p2','state-n1','state-n2','state-far'];
 function syncFrame(){
   const mediaTime=AUD.currentTime;
+  const SPICY=document.body.classList.contains('spicy');
   updateBeatVisuals(mediaTime);
   const t=mediaTime-lyricDelay;
   if(AUD.duration){
-    document.getElementById('seekfill').style.width=(mediaTime/AUD.duration*100)+'%';const _mpf=document.getElementById('mp-fill');if(_mpf)_mpf.style.width=(mediaTime/AUD.duration*100)+'%';
-    document.getElementById('t-cur').textContent=fmtS(mediaTime);
+    const _pct=scrubbing?scrubPct:mediaTime/AUD.duration*100;
+    document.getElementById('seekfill').style.width=_pct+'%';const _mpf=document.getElementById('mp-fill');if(_mpf)_mpf.style.width=_pct+'%';
+    document.getElementById('t-cur').textContent=scrubbing?fmtS(scrubPct/100*AUD.duration):fmtS(mediaTime);
     document.getElementById('t-tot').textContent='−'+fmtS(AUD.duration-mediaTime);
+    if(navigator.mediaSession&&navigator.mediaSession.setPositionState){const _n=Math.floor(mediaTime);if(_n!==_lastPos){_lastPos=_n;try{navigator.mediaSession.setPositionState({duration:AUD.duration,playbackRate:AUD.playbackRate||1,position:Math.min(mediaTime,AUD.duration)});}catch(e){}}}
   }
   if(!lines.length||plainMode)return;
   updateMetroGap(t);
@@ -5193,11 +5325,14 @@ function syncFrame(){
     const i=+el.dataset.i,dist=i-active,want=live.has(i)?'state-cur':lineState(dist===0?-1:dist);
     if(!el.classList.contains(want)){el.classList.remove(...ALL_STATES);el.classList.add(want);}
   });
-  if(active!==lastActive&&active>=0){
+  if(active!==lastActive){
     lastActive=active;
-    const el=document.querySelector(`.lrc-line[data-i="${active}"]`);
-    if(el&&Date.now()>=manualScrollUntil)scrollLyric(el);
+    if(reducedMotion.matches&&active>=0&&Date.now()>=manualScrollUntil){
+      const el=document.querySelector(`.lrc-line[data-i="${active}"]`);
+      if(el)scrollLyric(el);
+    }
   }
+  if(active>=0&&!reducedMotion.matches&&Date.now()>=manualScrollUntil)glideLyrics(active,t);
   const range=[...new Set([active-1,active,active+1,...live])].filter(i=>i>=0&&i<lines.length);
   for(const li of range){
     const line=lines[li],lastWI=line.words.length-1;
@@ -5205,6 +5340,18 @@ function syncFrame(){
       const sp=document.querySelector(`.lrc-word[data-li="${li}"][data-wi="${wi}"]`);
       if(!sp)return;
       const bright=sp.querySelector('.w-bright');
+      if(SPICY){
+        bright.style.clipPath='none';
+        sp.classList.toggle('singing',live.has(li)&&t>=w.s&&t<w.e);
+        if(t>=w.e){sp.classList.add('sung');bright.style.setProperty('--gp','100%');}
+        else if(t>=w.s){sp.classList.remove('sung');
+          const stp=sylCharOn(w,t);let p2;
+          if(stp){let rv=0;for(const o of stp)if(o)rv++;p2=rv/(stp.length||1)*100;}
+          else p2=(t-w.s)/(w.e-w.s)*100;
+          bright.style.setProperty('--gp',p2.toFixed(2)+'%');}
+        else{sp.classList.remove('sung');bright.style.setProperty('--gp','0%');}
+        return;
+      }
       if(lyricMode==='Line by line'){sp.classList.toggle('sung',live.has(li));sp.classList.remove('last-pop','singing');bright.style.clipPath='inset(0 100% 0 0)';return;}
       if(document.body.classList.contains('metro'))paintMetroWord(sp,w,t,wi===lastWI);
       sp.classList.toggle('singing',live.has(li)&&t>=w.s&&t<w.e);
@@ -5268,13 +5415,41 @@ function setLyricStyle(value){
   if(value==='spicy')document.body.classList.add('spicy');
   if(value==='stage')document.body.classList.add('flashy');
   if(value==='calm')document.body.classList.add('calm');
-  lastActive=-1;syncFrame();
+  lastActive=-1;glideCooldownUntil=0;syncFrame();
+}
+function lyricLineTarget(el,panel){
+  const y=el.getBoundingClientRect().top-panel.getBoundingClientRect().top+panel.scrollTop;
+  const frac=document.body.classList.contains('spicy')?.52:.5;
+  return Math.max(0,y-panel.clientHeight*frac+el.clientHeight/2);
 }
 function scrollLyric(el){
   const panel=document.getElementById('right');
-  const y=el.getBoundingClientRect().top-panel.getBoundingClientRect().top+panel.scrollTop;
-  const frac=document.body.classList.contains('spicy')?.5:.43;
-  panel.scrollTo({top:Math.max(0,y-panel.clientHeight*frac+el.clientHeight/2),behavior:reducedMotion.matches?'instant':'smooth'});
+  panel.scrollTo({top:lyricLineTarget(el,panel),behavior:reducedMotion.matches?'instant':'smooth'});
+}
+/* v47: Apple Music-style glide — the lyric viewport eases toward the next line
+   starting ~2.2 s before it arrives, instead of jumping when the line changes. */
+let glideCooldownUntil=0;
+function glideLyrics(active,t){
+  const panel=document.getElementById('right');
+  const el=lyricLineEls[active];if(!el||!panel.clientHeight)return;
+  if(Date.now()<glideCooldownUntil)return;
+  const target=lyricLineTarget(el,panel);
+  const cur=panel.scrollTop;
+  if(Math.abs(target-cur)>panel.clientHeight*1.15){
+    panel.scrollTo({top:target,behavior:'instant'});
+    glideCooldownUntil=Date.now()+600;
+    return;
+  }
+  let top=target;
+  const next=lyricLineEls[active+1];
+  if(next&&lines[active+1]){
+    const gap=lines[active+1].time-t,LEAD=2.2;
+    if(gap>0&&gap<LEAD){
+      const p=1-gap/LEAD,e=p*p*(3-2*p);
+      top=target+(lyricLineTarget(next,panel)-target)*e;
+    }
+  }
+  if(Math.abs(top-cur)>0.5)panel.scrollTo({top:Math.max(0,top),behavior:'instant'});
 }
 function resumeFollow(){manualScrollUntil=0;document.getElementById('resume-follow').classList.remove('visible');lastActive=-1;syncFrame();}
 for(const event of ['wheel','touchmove'])document.getElementById('right').addEventListener(event,()=>{manualScrollUntil=Infinity;document.getElementById('resume-follow').classList.add('visible');},{passive:true});
@@ -5336,6 +5511,16 @@ function updateMetroGap(t){
   }
 }
 
+function openArtFull(){
+  const t=library.find(x=>x.id===currentTrack);const url=trackCoverSrc(t);if(!url)return;
+  const f=document.getElementById('art-full');
+  document.getElementById('art-full-img').src=url;
+  document.getElementById('art-full-bg').style.backgroundImage='url("'+url+'")';
+  document.getElementById('art-full-title').textContent=t?.name||'';
+  document.getElementById('art-full-artist').textContent=t?.artist||'';
+  f.classList.add('open');f.setAttribute('aria-hidden','false');
+}
+function closeArtFull(){const f=document.getElementById('art-full');f.classList.remove('open');f.setAttribute('aria-hidden','true');}
 function openSheet(){document.body.classList.add('settings-open');document.getElementById('sheet').classList.add('open');document.getElementById('sheet').setAttribute('aria-hidden','false');document.getElementById('scrim').classList.add('open');}
 function closeSheet(){document.body.classList.remove('settings-open');document.getElementById('sheet').classList.remove('open');document.getElementById('sheet').setAttribute('aria-hidden','true');document.getElementById('scrim').classList.remove('open');}
 (function(){const pill=document.getElementById('sing-pill'),fill=document.getElementById('sing-fill');if(!pill||!fill)return;let v=.4;
@@ -5346,12 +5531,7 @@ function closeSheet(){document.body.classList.remove('settings-open');document.g
   pill.addEventListener('wheel',e=>{e.preventDefault();v=Math.min(1,Math.max(0,v-e.deltaY/800));apply();},{passive:false});apply();})();
 /* ═══ UTILS ═══ */
 function fmtS(s){s=s||0;return Math.floor(s/60)+':'+Math.floor(s%60).toString().padStart(2,'0');}
-document.addEventListener('keydown',e=>{
-  if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;
-  if(e.code==='Space'){e.preventDefault();togglePlay();}
-  if(e.code==='ArrowLeft')skip(-5);
-  if(e.code==='ArrowRight')skip(5);
-});
+
 
 /* Local library: IndexedDB stores media blobs; no audio is uploaded. */
 let library=[],smartPlaylists=[],playlists=[],queue=[],queueIndex=-1,currentTrack=null,libView='songs',shuffle=false,repeatMode=0,importBusy=false,playHistory=[];
@@ -5381,8 +5561,26 @@ function previousTrack(){if(AUD.currentTime>3){AUD.currentTime=0;return;}const i
 function updateTransport(){const sh=document.getElementById('shuffleBtn'),re=document.getElementById('repeatBtn');sh.classList.toggle('on',shuffle);sh.setAttribute('aria-pressed',shuffle);sh.title='Shuffle '+(shuffle?'on':'off');re.classList.toggle('on',repeatMode>0);re.dataset.mode=repeatMode===2?'1':'';re.title=['Repeat off','Repeat queue','Repeat one'][repeatMode];re.setAttribute('aria-label',re.title);}
 document.getElementById('shuffleBtn').onclick=()=>{shuffle=!shuffle;shuffleSeen.clear();updateTransport();saveLibraryState();};
 document.getElementById('repeatBtn').onclick=()=>{repeatMode=(repeatMode+1)%3;updateTransport();saveLibraryState();};
-AUD.addEventListener('ended',()=>{if(sleepAtEnd){setSleep('0');AUD.pause();toast('Sleep timer finished');}else nextTrack(true);});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('playlist-dialog').open){closeSheet();document.body.classList.remove('focus-lyrics');}});
+AUD.addEventListener('ended',()=>{if(sleepAtEnd){setSleep('0');AUD.pause();toast('Sleep timer finished');}else if(Date.now()-lastManualSeekAt<2000){AUD.currentTime=0;AUD.pause();}else nextTrack(true);});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('playlist-dialog').open){closeSheet();closeArtFull();document.body.classList.remove('focus-lyrics');}});
+/* v48: keyboard shortcuts (desktop) */
+window.addEventListener('keydown',e=>{
+  const tag=(e.target&&e.target.tagName||'').toUpperCase();
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||(e.target&&e.target.isContentEditable))return;
+  if(e.metaKey||e.ctrlKey||e.altKey)return;
+  switch(e.key){
+    case ' ':e.preventDefault();togglePlay();break;
+    case 'ArrowRight':e.preventDefault();if(AUD.duration)AUD.currentTime=Math.min(AUD.duration,AUD.currentTime+5);break;
+    case 'ArrowLeft':e.preventDefault();AUD.currentTime=Math.max(0,AUD.currentTime-5);break;
+    case 'ArrowUp':e.preventDefault();AUD.volume=Math.min(1,AUD.volume+.05);break;
+    case 'ArrowDown':e.preventDefault();AUD.volume=Math.max(0,AUD.volume-.05);break;
+    case 'n':case 'N':nextTrack();break;
+    case 'p':case 'P':previousTrack();break;
+    case 'm':case 'M':AUD.muted=!AUD.muted;break;
+    case 'l':case 'L':document.body.classList.contains('view-player')?closeNowPlaying():openNowPlaying();break;
+    case 'f':case 'F':document.getElementById('art-full').classList.contains('open')?closeArtFull():openArtFull();break;
+  }
+});
 AUD.addEventListener('error',showMediaError);
 function setLibraryView(v){libView=v;renderLibrary();}
 function button(text,fn,title=text){const b=document.createElement('button');b.type='button';b.className='lib-button';b.textContent=text;b.title=title;b.onclick=fn;return b;}
@@ -5643,7 +5841,7 @@ async function prewarmCover(t){
   const candidates=[];
   for(const [name,task] of tasks){if(signal.aborted)return;try{for(const url of (await task()).slice(0,2)){if(url&&new URL(url).protocol==='https:')candidates.push({name,url});}}catch(e){if(signal.aborted)return;}}
   const seen=new Set();
-  for(const c of candidates){if(signal.aborted)return;for(const url of artworkVariants(c.url)){if(seen.has(url))continue;seen.add(url);try{const size=await checkRemoteImage(url,signal);if(size.width<120||size.height<120)continue;const blob=await imageBlob(url,signal);await saveCover(blob,t.id);window.__v35log.push({id:t.id,cover:1,source:c.name});return;}catch(e){if(signal.aborted)return;}}}
+  for(const c of candidates){if(signal.aborted)return;if(t.coverSource==='user')return;for(const url of artworkVariants(c.url)){if(seen.has(url))continue;seen.add(url);try{const size=await checkRemoteImage(url,signal);if(size.width<120||size.height<120)continue;const blob=await imageBlob(url,signal);await saveCover(blob,t.id);window.__v35log.push({id:t.id,cover:1,source:c.name});return;}catch(e){if(signal.aborted)return;}}}
 }
 function renderLibrary(){
  updateLibCount();
@@ -5722,13 +5920,15 @@ renderSourceOptions();
 let lyricMode='No lyrics',lyricDelay=0,artController=null,artRevision=0;
 function setSyncType(mode){lyricMode=mode;document.getElementById('sync-type').textContent=mode;document.body.classList.toggle('line-mode',mode==='Line by line');}
 function updateTimingLabel(){document.getElementById('timing-value').textContent=(lyricDelay>0?'+':'')+lyricDelay.toFixed(2)+' s';}
-function adjustTiming(delta,reset=false){lyricDelay=reset?0:Math.max(-30,Math.min(30,lyricDelay+delta));updateTimingLabel();poppedLines.clear();lastActive=-1;const t=library.find(t=>t.id===currentTrack);if(t){t.lyricDelay=lyricDelay;dbOp('tracks','readwrite',s=>s.put(t)).catch(()=>{});}syncFrame();}
+function adjustTiming(delta,reset=false){lyricDelay=reset?0:Math.max(-30,Math.min(30,lyricDelay+delta));updateTimingLabel();const _tSl=document.getElementById('timing-slider');if(_tSl)_tSl.value=Math.max(-2,Math.min(2,lyricDelay));poppedLines.clear();lastActive=-1;const t=library.find(t=>t.id===currentTrack);if(t){t.lyricDelay=lyricDelay;dbOp('tracks','readwrite',s=>s.put(t)).catch(()=>{});}syncFrame();}
+function setTiming(v){lyricDelay=Math.max(-30,Math.min(30,Math.round(v*100)/100));updateTimingLabel();const sl=document.getElementById('timing-slider');if(sl)sl.value=Math.max(-2,Math.min(2,lyricDelay));poppedLines.clear();lastActive=-1;const t=library.find(t=>t.id===currentTrack);if(t){t.lyricDelay=lyricDelay;dbOp('tracks','readwrite',s=>s.put(t)).catch(()=>{});}syncFrame();}
+document.getElementById('timing-slider').addEventListener('input',e=>setTiming(parseFloat(e.target.value)));
 function waitForDuration(){if(!AUD.getAttribute('src')||Number.isFinite(AUD.duration))return Promise.resolve();return new Promise(resolve=>{const done=()=>{clearTimeout(timer);AUD.removeEventListener('loadedmetadata',done);AUD.removeEventListener('error',done);resolve();};const timer=setTimeout(done,2500);AUD.addEventListener('loadedmetadata',done,{once:true});AUD.addEventListener('error',done,{once:true});});}
 function validateTiming(result,data,duration){if(result.plain||result.instrumental)return;const ls=result.lines;if(!ls?.length)throw Error('No timing');const last=Math.max(...ls.flatMap(l=>l.words.map(w=>w.e)));const distinct=new Set(ls.map(l=>l.time));if(distinct.size<2||last<=0)throw Error('Invalid or repeated timestamps');if(duration&&last>duration+8)throw Error('Lyrics exceed this recording duration; trying another source');const declared=data.duration??data.data?.duration; if(duration&&typeof declared==='number'&&declared>0&&Math.abs(declared-duration)>Math.max(5,duration*.025))throw Error('Different recording length; trying another source');}
 function artStatus(t){document.getElementById('art-status').textContent=t;}
 function cancelCover(){artController?.abort();artController=null;}
 document.getElementById('auto-cover').onchange=e=>{if(!e.target.checked){cancelCover();artStatus('Automatic cover lookup off');}};
-async function saveCover(blob,id){const t=library.find(t=>t.id===id);if(!t)return;t.savedCover=blob;delete t.savedCoverUrl;try{coverUrlCache.delete(id);}catch(e){}try{await dbOp('tracks','readwrite',s=>s.put(t));}catch{artStatus('Cover applied for this session; storage unavailable');}}
+async function saveCover(blob,id,user=false){const t=library.find(t=>t.id===id);if(!t)return;t.savedCover=blob;if(user)t.coverSource='user';delete t.savedCoverUrl;try{coverUrlCache.delete(id);}catch(e){}try{await dbOp('tracks','readwrite',s=>s.put(t));}catch{artStatus('Cover applied for this session; storage unavailable');}}
 async function imageBlob(url,signal){const ctrl=new AbortController();const abort=()=>ctrl.abort();signal.addEventListener('abort',abort,{once:true});if(signal.aborted)ctrl.abort();const timer=setTimeout(abort,10000);try{const r=await fetch(url,{signal:ctrl.signal,credentials:'omit',referrerPolicy:'no-referrer'});if(!r.ok)throw Error('Image HTTP '+r.status);const blob=await r.blob();if(blob.size>15e6)throw Error('Image too large');const bitmap=await createImageBitmap(blob);bitmap.close();return blob;}finally{clearTimeout(timer);signal.removeEventListener('abort',abort);}}
 async function findCover(force=false,target=null){if(target){prewarmCover(target);return;}cancelCover();const revision=artRevision,generation=trackGeneration,id=currentTrack;const ctrl=artController=new AbortController(),signal=ctrl.signal;if(force)freshSignals.add(signal);
  const title=document.getElementById('query-title').value.trim(),artist=document.getElementById('query-artist').value.trim();if(!title||!artist){artStatus('Enter song and artist in Edit lookup first.');return;}
@@ -5753,6 +5953,7 @@ async function findCover(force=false,target=null){if(target){prewarmCover(target
  if(!best){artStatus('No matching accessible cover. Existing artwork kept.');return;}
  let blob=null;try{blob=await imageBlob(best.url,signal);}catch(e){if(signal.aborted)return;}
  if(signal.aborted||revision!==artRevision||generation!==trackGeneration)return;
+ const _uct=library.find(x=>x.id===id);if(_uct&&_uct.coverSource==='user'){artStatus('Keeping your uploaded cover — user photos always win');return;}
  setArt(blob?URL.createObjectURL(blob):best.url,true);
  artStatus('Best tested cover · '+best.name+' · '+best.width+' × '+best.height+(blob?' · cached':' · online image'));
  if(blob)await saveCover(blob,id);else{const track=library.find(t=>t.id===id);if(track){track.savedCoverUrl=best.url;delete track.savedCover;await persistTrack(track);}}
@@ -6017,7 +6218,7 @@ async function importBackup(file){
   let entries;
   try{entries=await readZip(file);}catch(err){libNotice('Could not read backup: '+err.message);return;}
   const j=entries['backup.json'];
-  if(!j){libNotice('Not a Metro backup — backup.json missing.');return;}
+  if(!j){libNotice('Not a Cadenza backup — backup.json missing.');return;}
   let man;
   try{man=JSON.parse(new TextDecoder().decode(j));}catch{libNotice('Backup is corrupted.');return;}
   const tracks=man.tracks||[];
@@ -6198,7 +6399,7 @@ let playAttempt=0;
 function playbackMessage(text){const el=document.getElementById('playback-status');el.textContent=text;el.classList.toggle('visible',!!text);}
 function playableMime(t){if(t.type)return t.type;const ext=(t.name.split('.').pop()||'').toLowerCase();const map={flac:'audio/flac',mp3:'audio/mpeg',wav:'audio/wav',wave:'audio/wav',m4a:'audio/mp4',m4b:'audio/mp4',aac:'audio/aac',ogg:'audio/ogg',oga:'audio/ogg',opus:'audio/ogg',aiff:'audio/aiff',aif:'audio/aiff',webm:'audio/webm',mp4:'video/mp4'};return map[ext]||'';}
 function extOf(name){return (String(name||'').split('.').pop()||'').toLowerCase();}
-const SAFE_NATIVE_EXTS=new Set(['wav','wave','mp3','m4a','m4b','aac','flac','mp4','mpa']);
+const SAFE_NATIVE_EXTS=new Set(['wav','wave','mp3','m4a','m4b','aac','mp4','mpa']);
 function audioBufferToWavBlob(buf){
   const nch=buf.numberOfChannels,sr=buf.sampleRate,len=buf.length,bytes=44+len*nch*2;
   const view=new DataView(new Uint8Array(bytes).buffer);
@@ -6213,16 +6414,32 @@ function audioBufferToWavBlob(buf){
   return new Blob([view.buffer],{type:'audio/wav'});
 }
 /* Normalize risky codecs to a guaranteed-playable 16-bit WAV copy (kept alongside the original). */
+function probeNativePlayable(u8,mime){
+  return new Promise(res=>{
+    let done=false;const url=URL.createObjectURL(new Blob([u8],{type:mime}));
+    const a=new Audio();a.preload='auto';
+    const end=ok=>{if(done)return;done=true;try{a.pause();}catch(e){}a.removeAttribute('src');try{URL.revokeObjectURL(url);}catch(e){}res(ok);};
+    a.oncanplaythrough=()=>end(true);
+    a.onerror=()=>end(false);
+    a.ontimeout=null;
+    const t=setTimeout(()=>end(false),6000);
+    a.addEventListener('canplaythrough',()=>clearTimeout(t),{once:true});
+    a.src=url;
+  });
+}
 async function ensureWavCopy(t){
-  if(!t||!t.blob||t.url||t.wavBlob)return t&&t.wavBlob||null;
+  if(!t||!t.blob||t.url||t.wavBlob||t.nativeOk)return t&&t.wavBlob||null;
   if(t.wavFailed||t.wavBusy)return null;
   if(SAFE_NATIVE_EXTS.has(extOf(t.name)))return null;
-  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
   t.wavBusy=true;
   let ctx=null;
   try{
+    const u8=new Uint8Array(await t.blob.arrayBuffer());
+    const ok=await probeNativePlayable(u8,playableMime(t)||('audio/'+extOf(t.name)));
+    if(ok){t.nativeOk=true;if(!t.temporary){try{await dbOp('tracks','readwrite',st=>st.put(t));}catch{}}return null;}
+    const AC=window.AudioContext||window.webkitAudioContext;if(!AC){t.wavFailed=true;return null;}
     ctx=new AC();
-    const audio=await ctx.decodeAudioData(await t.blob.arrayBuffer());
+    const audio=await ctx.decodeAudioData(u8.buffer.slice(0));
     const wav=audioBufferToWavBlob(audio);
     t.wavBlob=wav;
     if(!t.temporary){try{await dbOp('tracks','readwrite',st=>st.put(t));}catch{}}
@@ -6243,10 +6460,42 @@ function queueWavMigration(){(async()=>{
     await new Promise(r=>setTimeout(r,150));
   }
 })();}
+/* ═══ v48 · 5-band WebAudio equalizer ═══ */
+const EQ={ctx:null,filters:null,gains:[0,0,0,0,0]};
+const EQ_PRESETS={'Flat':[0,0,0,0,0],'Bass boost':[8,4,0,-2,0],'Bass & treble':[6,1,-1,1,6],'Vocal':[-4,2,5,2,-4],'Treble boost':[0,-2,0,4,8],'Lo-fi':[6,2,-2,-6,-8]};
+function safePrefs(){try{return JSON.parse(localStorage.getItem('metro-player-preferences')||'{}');}catch{return {};}}
+function eqEnsure(){
+  if(EQ.ctx)return;
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+    const ctx=new AC();
+    const src=ctx.createMediaElementSource(AUD);
+    const bands=[{type:'lowshelf',freq:60},{type:'peaking',freq:230,Q:1},{type:'peaking',freq:900,Q:1},{type:'peaking',freq:3600,Q:1},{type:'highshelf',freq:12000}];
+    let node=src;
+    EQ.filters=bands.map(b=>{const f=ctx.createBiquadFilter();f.type=b.type;f.frequency.value=b.freq;if(b.Q)f.Q.value=b.Q;f.gain.value=0;node.connect(f);node=f;return f;});
+    node.connect(ctx.destination);
+    EQ.ctx=ctx;
+  }catch(e){EQ.ctx=null;EQ.filters=null;}
+}
+function eqApply(){
+  if(!EQ.ctx)return;
+  EQ.filters.forEach((f,i)=>{f.gain.value=EQ.gains[i]||0;});
+  try{if(EQ.ctx.state==='suspended')EQ.ctx.resume();}catch(e){}
+}
+function eqSetBand(i,v){EQ.gains[i]=Math.max(-12,Math.min(12,Math.round(Number(v)||0)));eqApply();eqStore();eqUiSync();}
+function eqSetPreset(name){const p=EQ_PRESETS[name];if(p)p.forEach((v,i)=>eqSetBand(i,v));}
+function eqStore(){try{localStorage.setItem('metro-player-preferences',JSON.stringify({...safePrefs(),eq:EQ.gains.slice()}));}catch{}}
+function eqRestore(){try{const p=safePrefs();if(Array.isArray(p.eq))EQ.gains=p.eq.slice(0,5).map(v=>Math.max(-12,Math.min(12,Math.round(Number(v)||0))));}catch{}}
+function eqReset(){EQ.gains=[0,0,0,0,0];eqApply();eqStore();eqUiSync();}
+function eqUiSync(){
+  if(!document.getElementById('eq-0'))return;
+  EQ.gains.forEach((v,i)=>{const el=document.getElementById('eq-'+i);if(el)el.value=v;const d=document.getElementById('eq-d'+i);if(d)d.textContent=(v>0?'+':'')+v;});
+}
+eqRestore();eqUiSync();
 async function safePlay(){
  const attempt=++playAttempt,src=AUD.getAttribute('src');if(!src){playbackMessage('Select a track first.');return;}
  const timer=setTimeout(()=>{if(attempt===playAttempt&&AUD.paused)playbackMessage('Still loading audio. Check the connection or tap here to retry.');},12000);
- try{await AUD.play();if(attempt===playAttempt)playbackMessage('');}
+ try{eqEnsure();eqApply();await AUD.play();if(attempt===playAttempt)playbackMessage('');}
  catch(e){if(attempt!==playAttempt||src!==AUD.getAttribute('src'))return;
   if(e.name==='AbortError'){playbackMessage('Playback was interrupted. Tap Play to resume.');}
   else if(e.name==='NotAllowedError'){playbackMessage('Your browser requires a tap to start audio. Tap Play.');}
@@ -6255,18 +6504,25 @@ async function safePlay(){
 }
 function showMediaError(error){const track=library.find(t=>t.id===currentTrack),code=AUD.error?.code;let message;
  if(lastWavSource&&track&&!track.url&&track.blob&&!track._wavTried){track._wavTried=true;try{loadAudioFile(new File([track.blob],track.name,{type:playableMime(track)}));if(!AUD.paused||true)safePlay();}catch(e){}}
- else if(code===2)message='Audio network error. Check the connection or URL; tap here to retry.';
+ else if(code===2)message=track&&track.url?'The audio URL could not be loaded. Preview/URL links often expire — tap here to retry, or re-add the URL from the track menu.':'Audio network error. Check the connection or URL; tap here to retry.';
  else if(code===3||code===4){
   const ext=track?extOf(track.name):'';
-  if(track?.url)message='Audio URL unavailable or unsupported. It may be expired or link to a webpage rather than audio.';
+  if(track?.url)message='The audio URL is unavailable. Preview/URL links often expire or link to a webpage rather than audio — retry here, or re-add the URL from the track menu.';
+  else if(track&&!track.url&&track.blob&&!track.wavBlob&&!track.wavFailed&&!track.nativeOk){
+   ensureWavCopy(track).then(w=>{
+    if(w){lastWavSource=true;loadAudioFile(new File([w],track.name,{type:'audio/wav'}));safePlay();}
+    else playbackMessage('This browser cannot play '+(ext?ext.toUpperCase()+' ':'')+'audio. The file is kept safely in your library and other tracks are unaffected. Convert the original file to WAV, MP3 or AAC and import it again — it will match this entry automatically (the file may also be damaged).');
+   });
+   return;
+  }
   else message='This browser cannot play '+(ext?ext.toUpperCase()+' ':'')+'audio. The file is kept safely in your library and other tracks are unaffected. Convert the original file to WAV, MP3, AAC or FLAC and import it again — it will match this entry automatically (the file may also be damaged).';
  }
  else message='Playback problem. Tap here to retry.';
  if(message){playbackMessage(message);libNotice(message);}
 }
 function retryPlayback(){const t=library.find(t=>t.id===currentTrack);if(!t){playbackMessage('Select a track from the library.');return;}playLibraryTrack(t.id,null,true);}
-AUD.addEventListener('playing',()=>playbackMessage(''));
-AUD.addEventListener('waiting',()=>{if(!AUD.paused)playbackMessage('Buffering…');});
+AUD.addEventListener('playing',()=>{if(_bufT){clearTimeout(_bufT);_bufT=null;}playbackMessage('');});
+AUD.addEventListener('waiting',()=>{if(!AUD.paused&&!_bufT)_bufT=setTimeout(()=>playbackMessage('Buffering…'),700);});
 
 let artistController=null;
 async function openArtistProfile(name=''){
@@ -6496,11 +6752,15 @@ startRaf();
 const SYM={"house": "<svg class='sym' viewBox='0 0 58.974609375 55.9453125'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-55.9453125)'><path fill-rule='nonzero' d='\n    M 15.361328125,5.392578125\n    L 43.591796875,5.392578125\n    C 46.642578125,5.392578125 48.42578125,7.111328125 48.42578125,10.140625\n    L 48.42578125,29.755859375\n    L 51.197265625,27.220703125\n    C 51.626953125,26.791015625 52.12109375,26.490234375 52.744140625,26.490234375\n    C 53.75390625,26.490234375 54.5703125,27.11328125 54.5703125,28.14453125\n    C 54.5703125,28.7890625 54.3125,29.197265625 53.92578125,29.5625\n    L 46.470703125,36.373046875\n    L 46.470703125,49.02734375\n    C 46.470703125,49.97265625 45.84765625,50.57421875 44.923828125,50.57421875\n    L 42.109375,50.57421875\n    C 41.1640625,50.57421875 40.541015625,49.97265625 40.541015625,49.02734375\n    L 40.541015625,41.765625\n    L 32.0546875,49.5\n    C 31.302734375,50.1875 30.400390625,50.57421875 29.4765625,50.57421875\n    C 28.552734375,50.57421875 27.650390625,50.1875 26.8984375,49.5\n    L 5.02734375,29.5625\n    C 4.640625,29.197265625 4.3828125,28.7890625 4.3828125,28.14453125\n    C 4.3828125,27.11328125 5.19921875,26.490234375 6.208984375,26.490234375\n    C 6.810546875,26.490234375 7.326171875,26.791015625 7.755859375,27.220703125\n    L 10.52734375,29.734375\n    L 10.52734375,10.140625\n    C 10.52734375,7.111328125 12.310546875,5.392578125 15.361328125,5.392578125\n    Z\n    M 35.6640625,23.1171875\n    C 35.6640625,24.10546875 35.01953125,24.728515625 34.03125,24.728515625\n    L 24.921875,24.728515625\n    C 23.93359375,24.728515625 23.267578125,24.10546875 23.267578125,23.1171875\n    L 23.267578125,8.8515625\n    L 16.11328125,8.8515625\n    C 14.73828125,8.8515625 13.986328125,9.603515625 13.986328125,11.0\n    L 13.986328125,32.892578125\n    L 28.724609375,46.3203125\n    C 28.939453125,46.53515625 29.197265625,46.6640625 29.4765625,46.6640625\n    C 29.755859375,46.6640625 30.013671875,46.556640625 30.25,46.3203125\n    L 44.966796875,32.892578125\n    L 44.966796875,11.0\n    C 44.966796875,9.603515625 44.21484375,8.8515625 42.83984375,8.8515625\n    L 35.6640625,8.8515625\n    Z\n'/></g></svg>", "square.grid.2x2": "<svg class='sym' viewBox='0 0 50.53125 48.2109375'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-48.2109375)'><path fill-rule='nonzero' d='\n    M 9.58203125,25.888671875\n    L 19.37890625,25.888671875\n    C 22.107421875,25.888671875 23.482421875,27.263671875 23.482421875,30.099609375\n    L 23.482421875,39.703125\n    C 23.482421875,42.5390625 22.107421875,43.892578125 19.37890625,43.892578125\n    L 9.58203125,43.892578125\n    C 6.853515625,43.892578125 5.478515625,42.5390625 5.478515625,39.703125\n    L 5.478515625,30.099609375\n    C 5.478515625,27.263671875 6.853515625,25.888671875 9.58203125,25.888671875\n    Z\n    M 31.15234375,25.888671875\n    L 40.927734375,25.888671875\n    C 43.65625,25.888671875 45.03125,27.263671875 45.03125,30.099609375\n    L 45.03125,39.703125\n    C 45.03125,42.5390625 43.65625,43.892578125 40.927734375,43.892578125\n    L 31.15234375,43.892578125\n    C 28.40234375,43.892578125 27.02734375,42.5390625 27.02734375,39.703125\n    L 27.02734375,30.099609375\n    C 27.02734375,27.263671875 28.40234375,25.888671875 31.15234375,25.888671875\n    Z\n    M 9.625,28.91796875\n    C 8.873046875,28.91796875 8.5078125,29.3046875 8.5078125,30.099609375\n    L 8.5078125,39.703125\n    C 8.5078125,40.4765625 8.873046875,40.86328125 9.625,40.86328125\n    L 19.314453125,40.86328125\n    C 20.06640625,40.86328125 20.453125,40.4765625 20.453125,39.703125\n    L 20.453125,30.099609375\n    C 20.453125,29.3046875 20.06640625,28.91796875 19.314453125,28.91796875\n    Z\n    M 31.1953125,28.91796875\n    C 30.421875,28.91796875 30.056640625,29.3046875 30.056640625,30.099609375\n    L 30.056640625,39.703125\n    C 30.056640625,40.4765625 30.421875,40.86328125 31.1953125,40.86328125\n    L 40.884765625,40.86328125\n    C 41.63671875,40.86328125 42.001953125,40.4765625 42.001953125,39.703125\n    L 42.001953125,30.099609375\n    C 42.001953125,29.3046875 41.63671875,28.91796875 40.884765625,28.91796875\n    Z\n    M 9.58203125,4.33984375\n    L 19.37890625,4.33984375\n    C 22.107421875,4.33984375 23.482421875,5.693359375 23.482421875,8.529296875\n    L 23.482421875,18.154296875\n    C 23.482421875,20.96875 22.107421875,22.34375 19.37890625,22.34375\n    L 9.58203125,22.34375\n    C 6.853515625,22.34375 5.478515625,20.96875 5.478515625,18.154296875\n    L 5.478515625,8.529296875\n    C 5.478515625,5.693359375 6.853515625,4.33984375 9.58203125,4.33984375\n    Z\n    M 31.15234375,4.33984375\n    L 40.927734375,4.33984375\n    C 43.65625,4.33984375 45.03125,5.693359375 45.03125,8.529296875\n    L 45.03125,18.154296875\n    C 45.03125,20.96875 43.65625,22.34375 40.927734375,22.34375\n    L 31.15234375,22.34375\n    C 28.40234375,22.34375 27.02734375,20.96875 27.02734375,18.154296875\n    L 27.02734375,8.529296875\n    C 27.02734375,5.693359375 28.40234375,4.33984375 31.15234375,4.33984375\n    Z\n    M 9.625,7.369140625\n    C 8.873046875,7.369140625 8.5078125,7.755859375 8.5078125,8.529296875\n    L 8.5078125,18.1328125\n    C 8.5078125,18.927734375 8.873046875,19.314453125 9.625,19.314453125\n    L 19.314453125,19.314453125\n    C 20.06640625,19.314453125 20.453125,18.927734375 20.453125,18.1328125\n    L 20.453125,8.529296875\n    C 20.453125,7.755859375 20.06640625,7.369140625 19.314453125,7.369140625\n    Z\n    M 31.1953125,7.369140625\n    C 30.421875,7.369140625 30.056640625,7.755859375 30.056640625,8.529296875\n    L 30.056640625,18.1328125\n    C 30.056640625,18.927734375 30.421875,19.314453125 31.1953125,19.314453125\n    L 40.884765625,19.314453125\n    C 41.63671875,19.314453125 42.001953125,18.927734375 42.001953125,18.1328125\n    L 42.001953125,8.529296875\n    C 42.001953125,7.755859375 41.63671875,7.369140625 40.884765625,7.369140625\n    Z\n'/></g></svg>", "music.note.list": "<svg class='sym' viewBox='0 0 55.4296875 57.169921875'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-57.169921875)'><path fill-rule='nonzero' d='\n    M 29.3046875,6.74609375\n    C 32.484375,6.74609375 37.296875,9.130859375 37.296875,15.447265625\n    L 37.296875,35.10546875\n    C 37.296875,36.1796875 37.46875,36.373046875 38.435546875,36.56640625\n    L 48.662109375,38.822265625\n    C 49.435546875,38.994140625 49.9296875,39.595703125 49.9296875,40.34765625\n    L 49.9296875,48.447265625\n    C 49.9296875,49.650390625 48.94140625,50.4453125 47.759765625,50.1875\n    L 36.373046875,47.716796875\n    C 34.890625,47.39453125 34.1171875,46.62109375 34.1171875,45.33203125\n    L 34.24609375,21.44140625\n    C 34.24609375,20.453125 33.794921875,19.80859375 32.9140625,19.63671875\n    L 29.498046875,18.90625\n    C 25.115234375,18.00390625 23.07421875,15.748046875 23.07421875,12.4609375\n    C 23.07421875,9.109375 25.673828125,6.74609375 29.3046875,6.74609375\n    Z\n    M 6.939453125,39.251953125\n    L 26.146484375,39.251953125\n    C 26.94140625,39.251953125 27.607421875,39.91796875 27.607421875,40.712890625\n    C 27.607421875,41.5078125 26.94140625,42.15234375 26.146484375,42.15234375\n    L 6.939453125,42.15234375\n    C 6.123046875,42.15234375 5.478515625,41.5078125 5.478515625,40.712890625\n    C 5.478515625,39.91796875 6.123046875,39.251953125 6.939453125,39.251953125\n    Z\n    M 6.939453125,31.603515625\n    L 26.146484375,31.603515625\n    C 26.962890625,31.603515625 27.607421875,32.26953125 27.607421875,33.0859375\n    C 27.607421875,33.880859375 26.94140625,34.50390625 26.146484375,34.50390625\n    L 6.939453125,34.50390625\n    C 6.123046875,34.50390625 5.478515625,33.880859375 5.478515625,33.0859375\n    C 5.478515625,32.26953125 6.1015625,31.603515625 6.939453125,31.603515625\n    Z\n    M 6.939453125,23.955078125\n    L 26.146484375,23.955078125\n    C 26.962890625,23.955078125 27.607421875,24.599609375 27.607421875,25.416015625\n    C 27.607421875,26.2109375 26.94140625,26.85546875 26.146484375,26.85546875\n    L 6.939453125,26.85546875\n    C 6.123046875,26.85546875 5.478515625,26.2109375 5.478515625,25.416015625\n    C 5.478515625,24.599609375 6.1015625,23.955078125 6.939453125,23.955078125\n    Z\n'/></g></svg>", "music.note": "<svg class='sym' viewBox='0 0 37.833984375 57.169921875'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-57.169921875)'><path fill-rule='nonzero' d='\n    M 32.333984375,40.34765625\n    L 32.333984375,48.447265625\n    C 32.333984375,49.650390625 31.345703125,50.4453125 30.1640625,50.1875\n    L 18.77734375,47.716796875\n    C 17.294921875,47.39453125 16.5,46.62109375 16.5,45.33203125\n    L 16.650390625,21.44140625\n    C 16.650390625,20.453125 16.19921875,19.80859375 15.318359375,19.63671875\n    L 11.90234375,18.90625\n    C 7.51953125,18.00390625 5.478515625,15.748046875 5.478515625,12.4609375\n    C 5.478515625,9.109375 8.078125,6.74609375 11.6875,6.74609375\n    C 14.888671875,6.74609375 19.701171875,9.130859375 19.701171875,15.447265625\n    L 19.701171875,35.10546875\n    C 19.701171875,36.1796875 19.873046875,36.373046875 20.83984375,36.56640625\n    L 31.06640625,38.822265625\n    C 31.83984375,38.994140625 32.333984375,39.595703125 32.333984375,40.34765625\n    Z\n'/></g></svg>", "person": "<svg class='sym' viewBox='0 0 48.51171875 49.349609375'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-49.349609375)'><path fill-rule='nonzero' d='\n    M 24.255859375,24.6640625\n    C 29.369140625,24.6640625 33.537109375,29.21875 33.537109375,34.76171875\n    C 33.537109375,40.26171875 29.390625,44.580078125 24.255859375,44.580078125\n    C 19.1640625,44.580078125 14.974609375,40.17578125 14.974609375,34.71875\n    C 14.99609375,29.197265625 19.142578125,24.6640625 24.255859375,24.6640625\n    Z\n    M 24.255859375,27.908203125\n    C 21.119140625,27.908203125 18.43359375,30.916015625 18.43359375,34.71875\n    C 18.43359375,38.45703125 21.076171875,41.3359375 24.255859375,41.3359375\n    C 27.45703125,41.3359375 30.078125,38.5 30.078125,34.76171875\n    C 30.078125,30.958984375 27.4140625,27.908203125 24.255859375,27.908203125\n    Z\n    M 10.7421875,4.791015625\n    L 37.748046875,4.791015625\n    C 41.314453125,4.791015625 43.01171875,5.865234375 43.01171875,8.228515625\n    C 43.01171875,13.857421875 35.900390625,22.0 24.255859375,22.0\n    C 12.58984375,22.0 5.478515625,13.857421875 5.478515625,8.228515625\n    C 5.478515625,5.865234375 7.17578125,4.791015625 10.7421875,4.791015625\n    Z\n    M 9.732421875,8.03515625\n    C 9.173828125,8.03515625 8.9375,8.185546875 8.9375,8.63671875\n    C 8.9375,12.16015625 14.39453125,18.755859375 24.255859375,18.755859375\n    C 34.095703125,18.755859375 39.552734375,12.16015625 39.552734375,8.63671875\n    C 39.552734375,8.185546875 39.337890625,8.03515625 38.779296875,8.03515625\n    Z\n'/></g></svg>", "heart": "<svg class='sym' viewBox='0 0 53.302734375 49.263671875'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-49.263671875)'><path fill-rule='nonzero' d='\n    M 5.306640625,31.388671875\n    C 5.306640625,22.236328125 12.9765625,13.234375 25.09375,5.5\n    C 25.544921875,5.220703125 26.189453125,4.919921875 26.640625,4.919921875\n    C 27.091796875,4.919921875 27.736328125,5.220703125 28.208984375,5.5\n    C 40.3046875,13.234375 47.974609375,22.236328125 47.974609375,31.388671875\n    C 47.974609375,38.994140625 42.75390625,44.365234375 35.79296875,44.365234375\n    C 31.818359375,44.365234375 28.595703125,42.474609375 26.640625,39.57421875\n    C 24.728515625,42.453125 21.462890625,44.365234375 17.48828125,44.365234375\n    C 10.52734375,44.365234375 5.306640625,38.994140625 5.306640625,31.388671875\n    Z\n    M 8.765625,31.388671875\n    C 8.765625,37.103515625 12.4609375,40.90625 17.4453125,40.90625\n    C 21.484375,40.90625 23.8046875,38.392578125 25.1796875,36.244140625\n    C 25.759765625,35.384765625 26.125,35.1484375 26.640625,35.1484375\n    C 27.15625,35.1484375 27.478515625,35.40625 28.1015625,36.244140625\n    C 29.583984375,38.349609375 31.818359375,40.90625 35.8359375,40.90625\n    C 40.8203125,40.90625 44.515625,37.103515625 44.515625,31.388671875\n    C 44.515625,23.396484375 36.072265625,14.78125 27.091796875,8.80859375\n    C 26.876953125,8.658203125 26.7265625,8.55078125 26.640625,8.55078125\n    C 26.5546875,8.55078125 26.404296875,8.658203125 26.2109375,8.80859375\n    C 17.208984375,14.78125 8.765625,23.396484375 8.765625,31.388671875\n    Z\n'/></g></svg>", "clock": "<svg class='sym' viewBox='0 0 51.541015625 56.697265625'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-56.697265625)'><path fill-rule='nonzero' d='\n    M 25.759765625,6.4453125\n    C 37.748046875,6.4453125 47.673828125,16.37109375 47.673828125,28.359375\n    C 47.673828125,40.326171875 37.7265625,50.2734375 25.73828125,50.2734375\n    C 13.771484375,50.2734375 3.845703125,40.326171875 3.845703125,28.359375\n    C 3.845703125,16.37109375 13.79296875,6.4453125 25.759765625,6.4453125\n    Z\n    M 25.759765625,10.09765625\n    C 15.619140625,10.09765625 7.51953125,18.21875 7.51953125,28.359375\n    C 7.51953125,38.478515625 15.59765625,46.62109375 25.73828125,46.62109375\n    C 35.87890625,46.62109375 44.0,38.478515625 44.021484375,28.359375\n    C 44.04296875,18.21875 35.900390625,10.09765625 25.759765625,10.09765625\n    Z\n    M 14.5234375,26.0390625\n    L 25.73828125,26.0390625\n    C 26.576171875,26.0390625 27.2421875,26.68359375 27.2421875,27.54296875\n    L 27.2421875,42.0234375\n    C 27.2421875,42.861328125 26.576171875,43.505859375 25.73828125,43.505859375\n    C 24.900390625,43.505859375 24.255859375,42.861328125 24.255859375,42.0234375\n    L 24.255859375,29.025390625\n    L 14.5234375,29.025390625\n    C 13.6640625,29.025390625 13.01953125,28.380859375 13.01953125,27.54296875\n    C 13.01953125,26.68359375 13.6640625,26.0390625 14.5234375,26.0390625\n    Z\n'/></g></svg>", "gear": "<svg class='sym' viewBox='0 0 56.095703125 64.904296875'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-64.904296875)'><path fill-rule='nonzero' d='\n    M 28.037109375,11.537109375\n    C 28.595703125,11.537109375 29.1328125,11.6015625 29.712890625,11.64453125\n    L 30.9375,9.28125\n    C 31.173828125,8.80859375 31.646484375,8.55078125 32.248046875,8.63671875\n    C 32.78515625,8.744140625 33.150390625,9.130859375 33.236328125,9.7109375\n    L 33.6015625,12.310546875\n    C 34.67578125,12.58984375 35.728515625,12.998046875 36.73828125,13.44921875\n    L 38.671875,11.708984375\n    C 39.080078125,11.322265625 39.595703125,11.236328125 40.1328125,11.537109375\n    C 40.60546875,11.794921875 40.798828125,12.310546875 40.69140625,12.869140625\n    L 40.154296875,15.447265625\n    C 41.056640625,16.0703125 41.9375,16.779296875 42.732421875,17.57421875\n    L 45.1171875,16.564453125\n    C 45.654296875,16.349609375 46.169921875,16.45703125 46.578125,16.951171875\n    C 46.943359375,17.337890625 46.986328125,17.896484375 46.6640625,18.369140625\n    L 45.267578125,20.603515625\n    C 45.912109375,21.505859375 46.427734375,22.47265625 46.921875,23.50390625\n    L 49.564453125,23.375\n    C 50.123046875,23.353515625 50.57421875,23.654296875 50.767578125,24.19140625\n    C 50.939453125,24.728515625 50.7890625,25.244140625 50.337890625,25.587890625\n    L 48.275390625,27.220703125\n    C 48.5546875,28.251953125 48.76953125,29.369140625 48.876953125,30.529296875\n    L 51.34765625,31.302734375\n    C 51.90625,31.49609375 52.228515625,31.904296875 52.228515625,32.484375\n    C 52.228515625,33.04296875 51.90625,33.451171875 51.34765625,33.64453125\n    L 48.876953125,34.439453125\n    C 48.76953125,35.599609375 48.5546875,36.673828125 48.275390625,37.7265625\n    L 50.337890625,39.380859375\n    C 50.767578125,39.703125 50.939453125,40.197265625 50.767578125,40.734375\n    C 50.57421875,41.271484375 50.123046875,41.572265625 49.564453125,41.55078125\n    L 46.921875,41.443359375\n    C 46.427734375,42.474609375 45.912109375,43.44140625 45.267578125,44.34375\n    L 46.6640625,46.578125\n    C 46.96484375,47.029296875 46.921875,47.587890625 46.578125,47.974609375\n    C 46.169921875,48.46875 45.654296875,48.59765625 45.1171875,48.361328125\n    L 42.732421875,47.39453125\n    C 41.9375,48.146484375 41.056640625,48.876953125 40.154296875,49.5\n    L 40.69140625,52.056640625\n    C 40.798828125,52.63671875 40.60546875,53.15234375 40.1328125,53.41015625\n    C 39.595703125,53.689453125 39.080078125,53.646484375 38.671875,53.216796875\n    L 36.73828125,51.51953125\n    C 35.728515625,51.970703125 34.67578125,52.3359375 33.6015625,52.63671875\n    L 33.236328125,55.236328125\n    C 33.150390625,55.794921875 32.763671875,56.203125 32.2265625,56.2890625\n    C 31.646484375,56.375 31.173828125,56.138671875 30.9375,55.666015625\n    L 29.712890625,53.302734375\n    C 29.1328125,53.345703125 28.595703125,53.388671875 28.037109375,53.388671875\n    C 27.45703125,53.388671875 26.94140625,53.345703125 26.361328125,53.302734375\n    L 25.115234375,55.666015625\n    C 24.87890625,56.138671875 24.40625,56.375 23.826171875,56.2890625\n    C 23.2890625,56.203125 22.90234375,55.794921875 22.837890625,55.236328125\n    L 22.451171875,52.658203125\n    C 21.376953125,52.3359375 20.345703125,51.970703125 19.314453125,51.51953125\n    L 17.380859375,53.216796875\n    C 16.97265625,53.646484375 16.45703125,53.689453125 15.919921875,53.41015625\n    C 15.447265625,53.15234375 15.25390625,52.63671875 15.361328125,52.056640625\n    L 15.8984375,49.5\n    C 15.017578125,48.876953125 14.115234375,48.146484375 13.3203125,47.39453125\n    L 10.935546875,48.361328125\n    C 10.3984375,48.59765625 9.904296875,48.46875 9.49609375,47.974609375\n    C 9.130859375,47.587890625 9.087890625,47.029296875 9.388671875,46.599609375\n    L 10.78515625,44.34375\n    C 10.162109375,43.44140625 9.625,42.474609375 9.130859375,41.443359375\n    L 6.509765625,41.55078125\n    C 5.951171875,41.572265625 5.478515625,41.271484375 5.28515625,40.734375\n    C 5.11328125,40.197265625 5.263671875,39.703125 5.71484375,39.380859375\n    L 7.77734375,37.7265625\n    C 7.498046875,36.673828125 7.283203125,35.599609375 7.21875,34.439453125\n    L 4.705078125,33.64453125\n    C 4.146484375,33.47265625 3.845703125,33.064453125 3.845703125,32.484375\n    C 3.845703125,31.904296875 4.146484375,31.49609375 4.705078125,31.302734375\n    L 7.21875,30.5078125\n    C 7.283203125,29.369140625 7.498046875,28.251953125 7.77734375,27.220703125\n    L 5.71484375,25.587890625\n    C 5.28515625,25.244140625 5.134765625,24.728515625 5.28515625,24.19140625\n    C 5.478515625,23.654296875 5.951171875,23.353515625 6.509765625,23.375\n    L 9.130859375,23.50390625\n    C 9.625,22.47265625 10.162109375,21.505859375 10.78515625,20.603515625\n    L 9.388671875,18.369140625\n    C 9.087890625,17.896484375 9.130859375,17.337890625 9.49609375,16.951171875\n    C 9.904296875,16.45703125 10.3984375,16.349609375 10.935546875,16.564453125\n    L 13.3203125,17.57421875\n    C 14.115234375,16.779296875 15.017578125,16.0703125 15.8984375,15.447265625\n    L 15.361328125,12.869140625\n    C 15.25390625,12.310546875 15.447265625,11.794921875 15.919921875,11.537109375\n    C 16.45703125,11.236328125 16.97265625,11.322265625 17.380859375,11.708984375\n    L 19.314453125,13.44921875\n    C 20.345703125,12.998046875 21.376953125,12.58984375 22.451171875,12.310546875\n    L 22.837890625,9.7109375\n    C 22.90234375,9.130859375 23.2890625,8.744140625 23.826171875,8.63671875\n    C 24.40625,8.55078125 24.87890625,8.80859375 25.115234375,9.28125\n    L 26.361328125,11.64453125\n    C 26.919921875,11.6015625 27.45703125,11.537109375 28.037109375,11.537109375\n    Z\n    M 33.4296875,33.837890625\n    C 32.44140625,36.544921875 30.443359375,38.02734375 27.994140625,38.02734375\n    C 27.607421875,38.02734375 27.19921875,37.984375 26.490234375,37.833984375\n    L 20.32421875,48.361328125\n    C 22.64453125,49.5 25.244140625,50.123046875 28.037109375,50.123046875\n    C 37.404296875,50.123046875 44.751953125,43.01171875 45.439453125,33.837890625\n    Z\n    M 10.591796875,32.462890625\n    C 10.591796875,38.435546875 13.427734375,43.69921875 17.853515625,46.87890625\n    L 24.083984375,36.287109375\n    C 22.90234375,35.083984375 22.365234375,33.7734375 22.365234375,32.376953125\n    C 22.365234375,31.0234375 22.880859375,29.77734375 24.0625,28.53125\n    L 17.724609375,18.1328125\n    C 13.36328125,21.333984375 10.591796875,26.533203125 10.591796875,32.462890625\n    Z\n    M 25.416015625,32.3984375\n    C 25.416015625,33.859375 26.640625,34.998046875 28.037109375,34.998046875\n    C 29.4765625,34.998046875 30.6796875,33.859375 30.6796875,32.3984375\n    C 30.6796875,30.958984375 29.4765625,29.77734375 28.037109375,29.77734375\n    C 26.640625,29.77734375 25.416015625,30.958984375 25.416015625,32.3984375\n    Z\n    M 28.037109375,14.802734375\n    C 25.1796875,14.802734375 22.515625,15.46875 20.173828125,16.62890625\n    L 26.490234375,26.962890625\n    C 27.15625,26.791015625 27.607421875,26.748046875 27.994140625,26.748046875\n    C 30.46484375,26.748046875 32.462890625,28.2734375 33.4296875,31.044921875\n    L 45.41796875,31.044921875\n    C 44.73046875,21.9140625 37.404296875,14.802734375 28.037109375,14.802734375\n    Z\n'/></g></svg>", "chevron.down": "<svg class='sym' viewBox='0 0 48.296875 29.111328125'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-29.111328125)'><path fill-rule='nonzero' d='\n    M 24.1484375,4.060546875\n    C 24.685546875,4.060546875 25.22265625,4.275390625 25.587890625,4.68359375\n    L 42.216796875,21.720703125\n    C 42.58203125,22.0859375 42.796875,22.55859375 42.796875,23.095703125\n    C 42.796875,24.212890625 41.958984375,25.072265625 40.841796875,25.072265625\n    C 40.3046875,25.072265625 39.810546875,24.857421875 39.4453125,24.513671875\n    L 24.1484375,8.873046875\n    L 8.830078125,24.513671875\n    C 8.486328125,24.857421875 7.9921875,25.072265625 7.43359375,25.072265625\n    C 6.31640625,25.072265625 5.478515625,24.212890625 5.478515625,23.095703125\n    C 5.478515625,22.55859375 5.693359375,22.0859375 6.05859375,21.69921875\n    L 22.6875,4.68359375\n    C 23.095703125,4.275390625 23.58984375,4.060546875 24.1484375,4.060546875\n    Z\n'/></g></svg>", "play.fill": "<svg class='sym' viewBox='0 0 43.462890625 41.8515625'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-41.8515625)'><path fill-rule='nonzero' d='\n    M 8.056640625,2.75\n    C 8.916015625,2.75 9.646484375,3.09375 10.505859375,3.587890625\n    L 35.556640625,18.068359375\n    C 37.33984375,19.12109375 37.962890625,19.80859375 37.962890625,20.947265625\n    C 37.962890625,22.0859375 37.33984375,22.7734375 35.556640625,23.8046875\n    L 10.505859375,38.306640625\n    C 9.646484375,38.80078125 8.916015625,39.123046875 8.056640625,39.123046875\n    C 6.466796875,39.123046875 5.478515625,37.919921875 5.478515625,36.05078125\n    L 5.478515625,5.84375\n    C 5.478515625,3.974609375 6.466796875,2.75 8.056640625,2.75\n    Z\n'/></g></svg>", "pause.fill": "<svg class='sym' viewBox='0 0 37.189453125 39.05859375'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-39.05859375)'><path fill-rule='nonzero' d='\n    M 8.3359375,2.041015625\n    L 13.234375,2.041015625\n    C 15.103515625,2.041015625 16.091796875,3.029296875 16.091796875,4.919921875\n    L 16.091796875,34.181640625\n    C 16.091796875,36.13671875 15.103515625,37.0390625 13.234375,37.0390625\n    L 8.3359375,37.0390625\n    C 6.466796875,37.0390625 5.478515625,36.05078125 5.478515625,34.181640625\n    L 5.478515625,4.919921875\n    C 5.478515625,3.029296875 6.466796875,2.041015625 8.3359375,2.041015625\n    Z\n    M 23.955078125,2.041015625\n    L 28.83203125,2.041015625\n    C 30.72265625,2.041015625 31.689453125,3.029296875 31.689453125,4.919921875\n    L 31.689453125,34.181640625\n    C 31.689453125,36.13671875 30.72265625,37.0390625 28.83203125,37.0390625\n    L 23.955078125,37.0390625\n    C 22.064453125,37.0390625 21.076171875,36.05078125 21.076171875,34.181640625\n    L 21.076171875,4.919921875\n    C 21.076171875,3.029296875 22.064453125,2.041015625 23.955078125,2.041015625\n    Z\n'/></g></svg>", "backward.fill": "<svg class='sym' viewBox='0 0 60.28515625 36.609375'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-36.609375)'><path fill-rule='nonzero' d='\n    M 27.091796875,1.439453125\n    C 28.767578125,1.439453125 30.185546875,2.728515625 30.185546875,5.11328125\n    L 30.185546875,17.48828125\n    C 30.421875,16.5859375 31.087890625,15.8125 32.248046875,15.125\n    L 54.140625,2.234375\n    C 55.0,1.71875 55.73046875,1.439453125 56.611328125,1.439453125\n    C 58.287109375,1.439453125 59.705078125,2.728515625 59.705078125,5.11328125\n    L 59.705078125,31.517578125\n    C 59.705078125,33.90234375 58.287109375,35.19140625 56.611328125,35.19140625\n    C 55.73046875,35.19140625 55.021484375,34.912109375 54.140625,34.396484375\n    L 32.248046875,21.505859375\n    C 31.06640625,20.818359375 30.421875,20.044921875 30.185546875,19.142578125\n    L 30.185546875,31.517578125\n    C 30.185546875,33.90234375 28.767578125,35.19140625 27.091796875,35.19140625\n    C 26.2109375,35.19140625 25.501953125,34.912109375 24.62109375,34.396484375\n    L 2.728515625,21.505859375\n    C 1.203125,20.603515625 0.55859375,19.55078125 0.55859375,18.326171875\n    C 0.55859375,17.080078125 1.203125,16.02734375 2.728515625,15.125\n    L 24.62109375,2.234375\n    C 25.48046875,1.71875 26.2109375,1.439453125 27.091796875,1.439453125\n    Z\n'/></g></svg>", "forward.fill": "<svg class='sym' viewBox='0 0 70.146484375 36.609375'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-36.609375)'><path fill-rule='nonzero' d='\n    M 8.572265625,1.439453125\n    C 9.453125,1.439453125 10.18359375,1.71875 11.04296875,2.234375\n    L 32.935546875,15.125\n    C 34.1171875,15.8125 34.76171875,16.5859375 34.998046875,17.48828125\n    L 34.998046875,5.11328125\n    C 34.998046875,2.728515625 36.416015625,1.439453125 38.091796875,1.439453125\n    C 38.97265625,1.439453125 39.703125,1.71875 40.5625,2.234375\n    L 62.4765625,15.125\n    C 63.98046875,16.02734375 64.646484375,17.080078125 64.646484375,18.326171875\n    C 64.646484375,19.55078125 63.98046875,20.603515625 62.4765625,21.505859375\n    L 40.5625,34.396484375\n    C 39.703125,34.912109375 38.97265625,35.19140625 38.091796875,35.19140625\n    C 36.416015625,35.19140625 34.998046875,33.90234375 34.998046875,31.517578125\n    L 34.998046875,19.142578125\n    C 34.76171875,20.044921875 34.1171875,20.818359375 32.935546875,21.505859375\n    L 11.04296875,34.396484375\n    C 10.162109375,34.912109375 9.453125,35.19140625 8.572265625,35.19140625\n    C 6.896484375,35.19140625 5.478515625,33.90234375 5.478515625,31.517578125\n    L 5.478515625,5.11328125\n    C 5.478515625,2.728515625 6.896484375,1.439453125 8.572265625,1.439453125\n    Z\n'/></g></svg>", "shuffle": "<svg class='sym' viewBox='0 0 61.681640625 49.15625'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-49.15625)'><path fill-rule='nonzero' d='\n    M 5.478515625,13.578125\n    C 5.478515625,12.203125 6.48828125,11.2578125 8.013671875,11.2578125\n    L 12.890625,11.2578125\n    C 16.607421875,11.2578125 18.8203125,12.33203125 21.505859375,15.447265625\n    L 26.318359375,21.076171875\n    L 31.15234375,15.447265625\n    C 33.794921875,12.33203125 36.029296875,11.236328125 39.767578125,11.236328125\n    L 43.720703125,11.236328125\n    L 43.720703125,6.466796875\n    C 43.720703125,5.306640625 44.451171875,4.576171875 45.6328125,4.576171875\n    C 46.1484375,4.576171875 46.685546875,4.76953125 47.09375,5.11328125\n    L 55.21484375,11.81640625\n    C 56.181640625,12.611328125 56.181640625,13.900390625 55.21484375,14.6953125\n    L 47.09375,21.44140625\n    C 46.685546875,21.78515625 46.1484375,21.978515625 45.6328125,21.978515625\n    C 44.451171875,21.978515625 43.720703125,21.248046875 43.720703125,20.087890625\n    L 43.720703125,15.919921875\n    L 39.896484375,15.919921875\n    C 37.662109375,15.919921875 36.287109375,16.62890625 34.546875,18.669921875\n    L 29.412109375,24.6640625\n    L 34.546875,30.63671875\n    C 36.287109375,32.69921875 37.662109375,33.408203125 39.896484375,33.408203125\n    L 43.720703125,33.408203125\n    L 43.720703125,29.08984375\n    C 43.720703125,27.9296875 44.451171875,27.19921875 45.6328125,27.19921875\n    C 46.1484375,27.19921875 46.685546875,27.392578125 47.09375,27.736328125\n    L 55.21484375,34.439453125\n    C 56.181640625,35.234375 56.181640625,36.501953125 55.21484375,37.318359375\n    L 47.09375,44.064453125\n    C 46.685546875,44.408203125 46.1484375,44.6015625 45.6328125,44.6015625\n    C 44.451171875,44.6015625 43.720703125,43.87109375 43.720703125,42.7109375\n    L 43.720703125,38.0703125\n    L 39.767578125,38.0703125\n    C 36.029296875,38.0703125 33.794921875,36.974609375 31.15234375,33.859375\n    L 26.318359375,28.23046875\n    L 21.505859375,33.859375\n    C 18.8203125,36.974609375 16.607421875,38.0703125 12.890625,38.0703125\n    L 8.013671875,38.0703125\n    C 6.48828125,38.0703125 5.478515625,37.125 5.478515625,35.728515625\n    C 5.478515625,34.353515625 6.509765625,33.38671875 8.013671875,33.38671875\n    L 12.998046875,33.38671875\n    C 15.060546875,33.38671875 16.37109375,32.677734375 18.1328125,30.63671875\n    L 23.267578125,24.6640625\n    L 18.1328125,18.669921875\n    C 16.349609375,16.62890625 15.0390625,15.919921875 12.998046875,15.919921875\n    L 8.013671875,15.919921875\n    C 6.509765625,15.919921875 5.478515625,14.953125 5.478515625,13.578125\n    Z\n'/></g></svg>", "repeat": "<svg class='sym' viewBox='0 0 57.921875 47.845703125'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-47.845703125)'><path fill-rule='nonzero' d='\n    M 5.478515625,25.501953125\n    C 5.478515625,24.19140625 6.53125,23.138671875 7.841796875,23.138671875\n    C 9.15234375,23.138671875 10.205078125,24.19140625 10.205078125,25.501953125\n    L 10.205078125,26.919921875\n    C 10.205078125,30.3359375 12.568359375,32.591796875 16.091796875,32.591796875\n    L 32.291015625,32.591796875\n    L 32.291015625,28.1015625\n    C 32.291015625,26.94140625 33.04296875,26.2109375 34.224609375,26.2109375\n    C 34.740234375,26.2109375 35.27734375,26.404296875 35.685546875,26.748046875\n    L 43.806640625,33.451171875\n    C 44.7734375,34.224609375 44.751953125,35.513671875 43.806640625,36.330078125\n    L 35.685546875,43.076171875\n    C 35.27734375,43.3984375 34.740234375,43.61328125 34.224609375,43.61328125\n    C 33.04296875,43.61328125 32.291015625,42.861328125 32.291015625,41.701171875\n    L 32.291015625,37.25390625\n    L 16.54296875,37.25390625\n    C 9.775390625,37.25390625 5.478515625,33.365234375 5.478515625,27.263671875\n    Z\n    M 25.609375,19.744140625\n    C 25.609375,20.904296875 24.87890625,21.634765625 23.67578125,21.634765625\n    C 23.16015625,21.634765625 22.623046875,21.44140625 22.236328125,21.119140625\n    L 14.115234375,14.416015625\n    C 13.1484375,13.62109375 13.126953125,12.353515625 14.115234375,11.537109375\n    L 22.236328125,4.791015625\n    C 22.623046875,4.447265625 23.16015625,4.25390625 23.67578125,4.25390625\n    C 24.87890625,4.25390625 25.609375,4.984375 25.609375,6.14453125\n    L 25.609375,10.634765625\n    L 41.357421875,10.634765625\n    C 48.125,10.634765625 52.421875,14.544921875 52.421875,20.625\n    L 52.421875,22.38671875\n    C 52.421875,23.71875 51.369140625,24.771484375 50.05859375,24.771484375\n    C 48.748046875,24.771484375 47.6953125,23.71875 47.6953125,22.38671875\n    L 47.6953125,20.96875\n    C 47.6953125,17.57421875 45.33203125,15.296875 41.80859375,15.296875\n    L 25.609375,15.296875\n    Z\n'/></g></svg>", "speaker.fill": "<svg class='sym' viewBox='0 0 43.333984375 47.888671875'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-47.888671875)'><path fill-rule='nonzero' d='\n    M 32.419921875,4.25390625\n    C 33.880859375,4.25390625 34.955078125,5.328125 34.955078125,6.767578125\n    L 34.955078125,41.03515625\n    C 34.955078125,42.474609375 33.880859375,43.65625 32.376953125,43.65625\n    C 31.32421875,43.65625 30.615234375,43.205078125 29.4765625,42.130859375\n    L 19.958984375,33.171875\n    C 19.830078125,33.04296875 19.63671875,32.978515625 19.421875,32.978515625\n    L 13.01953125,32.978515625\n    C 9.990234375,32.978515625 8.357421875,31.32421875 8.357421875,28.080078125\n    L 8.357421875,19.765625\n    C 8.357421875,16.54296875 9.990234375,14.888671875 13.01953125,14.888671875\n    L 19.421875,14.888671875\n    C 19.63671875,14.888671875 19.830078125,14.82421875 19.958984375,14.6953125\n    L 29.4765625,5.650390625\n    C 30.5078125,4.68359375 31.3671875,4.25390625 32.419921875,4.25390625\n    Z\n'/></g></svg>", "speaker.2.fill": "<svg class='sym' viewBox='0 0 59.662109375 47.888671875'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-47.888671875)'><path fill-rule='nonzero' d='\n    M 28.208984375,4.25390625\n    C 29.669921875,4.25390625 30.72265625,5.328125 30.72265625,6.767578125\n    L 30.72265625,41.03515625\n    C 30.72265625,42.474609375 29.669921875,43.65625 28.166015625,43.65625\n    C 27.11328125,43.65625 26.404296875,43.205078125 25.265625,42.130859375\n    L 15.748046875,33.171875\n    C 15.59765625,33.04296875 15.42578125,32.978515625 15.2109375,32.978515625\n    L 8.787109375,32.978515625\n    C 5.7578125,32.978515625 4.125,31.32421875 4.125,28.080078125\n    L 4.125,19.765625\n    C 4.125,16.54296875 5.7578125,14.888671875 8.787109375,14.888671875\n    L 15.2109375,14.888671875\n    C 15.42578125,14.888671875 15.59765625,14.82421875 15.748046875,14.6953125\n    L 25.265625,5.650390625\n    C 26.296875,4.68359375 27.15625,4.25390625 28.208984375,4.25390625\n    Z\n    M 48.5546875,8.744140625\n    C 49.392578125,8.185546875 50.423828125,8.400390625 51.025390625,9.259765625\n    C 53.861328125,13.212890625 55.515625,18.4765625 55.515625,23.9765625\n    C 55.515625,29.498046875 53.904296875,34.783203125 51.025390625,38.71484375\n    C 50.40234375,39.552734375 49.392578125,39.767578125 48.5546875,39.208984375\n    C 47.73828125,38.650390625 47.609375,37.59765625 48.25390625,36.673828125\n    C 50.595703125,33.236328125 52.056640625,28.724609375 52.056640625,23.9765625\n    C 52.056640625,19.228515625 50.6171875,14.673828125 48.25390625,11.279296875\n    C 47.630859375,10.35546875 47.73828125,9.302734375 48.5546875,8.744140625\n    Z\n    M 39.982421875,14.544921875\n    C 40.712890625,14.029296875 41.765625,14.1796875 42.388671875,15.0390625\n    C 44.064453125,17.294921875 45.07421875,20.603515625 45.07421875,23.9765625\n    C 45.07421875,27.349609375 44.064453125,30.63671875 42.388671875,32.9140625\n    C 41.765625,33.7734375 40.734375,33.923828125 39.982421875,33.4296875\n    C 39.05859375,32.78515625 38.9296875,31.689453125 39.6171875,30.765625\n    C 40.86328125,29.08984375 41.615234375,26.533203125 41.615234375,23.9765625\n    C 41.615234375,21.419921875 40.8203125,18.86328125 39.595703125,17.166015625\n    C 38.951171875,16.2421875 39.05859375,15.189453125 39.982421875,14.544921875\n    Z\n'/></g></svg>", "ellipsis": "<svg class='sym' viewBox='0 0 48.232421875 30.958984375'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-30.958984375)'><path fill-rule='nonzero' d='\n    M 12.50390625,15.490234375\n    C 12.50390625,17.875 10.5703125,19.787109375 8.142578125,19.787109375\n    C 5.779296875,19.787109375 3.845703125,17.875 3.845703125,15.490234375\n    C 3.845703125,13.10546875 5.779296875,11.193359375 8.142578125,11.193359375\n    C 10.5703125,11.193359375 12.50390625,13.10546875 12.50390625,15.490234375\n    Z\n    M 28.40234375,15.490234375\n    C 28.40234375,17.875 26.490234375,19.787109375 24.10546875,19.787109375\n    C 21.7421875,19.787109375 19.830078125,17.875 19.830078125,15.490234375\n    C 19.830078125,13.10546875 21.7421875,11.193359375 24.10546875,11.193359375\n    C 26.490234375,11.193359375 28.40234375,13.10546875 28.40234375,15.490234375\n    Z\n    M 44.365234375,15.490234375\n    C 44.365234375,17.875 42.453125,19.787109375 40.068359375,19.787109375\n    C 37.640625,19.787109375 35.728515625,17.875 35.728515625,15.490234375\n    C 35.728515625,13.10546875 37.640625,11.193359375 40.068359375,11.193359375\n    C 42.453125,11.193359375 44.365234375,13.10546875 44.365234375,15.490234375\n    Z\n'/></g></svg>", "magnifyingglass": "<svg class='sym' viewBox='0 0 50.359375 50.015625'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-50.015625)'><path fill-rule='nonzero' d='\n    M 21.462890625,12.396484375\n    C 25.05078125,12.396484375 28.359375,13.556640625 31.06640625,15.490234375\n    L 41.25,5.306640625\n    C 41.72265625,4.833984375 42.345703125,4.59765625 43.01171875,4.59765625\n    C 44.408203125,4.59765625 45.396484375,5.671875 45.396484375,7.046875\n    C 45.396484375,7.69140625 45.181640625,8.29296875 44.708984375,8.765625\n    L 34.58984375,18.90625\n    C 36.716796875,21.69921875 37.984375,25.158203125 37.984375,28.91796875\n    C 37.984375,38.005859375 30.55078125,45.439453125 21.462890625,45.439453125\n    C 12.375,45.439453125 4.94140625,38.005859375 4.94140625,28.91796875\n    C 4.94140625,19.830078125 12.375,12.396484375 21.462890625,12.396484375\n    Z\n    M 21.462890625,15.962890625\n    C 14.373046875,15.962890625 8.5078125,21.828125 8.5078125,28.91796875\n    C 8.5078125,36.0078125 14.373046875,41.873046875 21.462890625,41.873046875\n    C 28.552734375,41.873046875 34.41796875,36.0078125 34.41796875,28.91796875\n    C 34.41796875,21.828125 28.552734375,15.962890625 21.462890625,15.962890625\n    Z\n'/></g></svg>", "plus": "<svg class='sym' viewBox='0 0 46.427734375 41.443359375'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-41.443359375)'><path fill-rule='nonzero' d='\n    M 23.203125,2.642578125\n    C 24.255859375,2.642578125 25.13671875,3.48046875 25.13671875,4.51171875\n    L 25.13671875,18.798828125\n    L 39.015625,18.798828125\n    C 40.046875,18.798828125 40.927734375,19.6796875 40.927734375,20.732421875\n    C 40.927734375,21.78515625 40.046875,22.64453125 39.015625,22.64453125\n    L 25.13671875,22.64453125\n    L 25.13671875,36.953125\n    C 25.13671875,37.984375 24.255859375,38.822265625 23.203125,38.822265625\n    C 22.150390625,38.822265625 21.291015625,37.984375 21.291015625,36.953125\n    L 21.291015625,22.64453125\n    L 7.390625,22.64453125\n    C 6.359375,22.64453125 5.478515625,21.78515625 5.478515625,20.732421875\n    C 5.478515625,19.6796875 6.359375,18.798828125 7.390625,18.798828125\n    L 21.291015625,18.798828125\n    L 21.291015625,4.51171875\n    C 21.291015625,3.48046875 22.150390625,2.642578125 23.203125,2.642578125\n    Z\n'/></g></svg>", "text.quote": "<svg class='sym' viewBox='0 0 54.26953125 42.92578125'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-42.92578125)'><path fill-rule='nonzero' d='\n    M 24.556640625,24.0625\n    C 27.28515625,24.0625 29.5625,25.888671875 29.5625,28.7890625\n    C 29.5625,31.5390625 27.693359375,33.34375 25.115234375,33.34375\n    C 23.826171875,33.34375 22.81640625,32.828125 22.193359375,31.83984375\n    C 22.859375,34.890625 25.158203125,36.91015625 28.251953125,37.0390625\n    C 29.08984375,37.08203125 29.712890625,37.662109375 29.712890625,38.478515625\n    C 29.712890625,39.466796875 28.91796875,39.982421875 27.822265625,39.982421875\n    C 23.009765625,39.982421875 18.69140625,35.857421875 18.69140625,30.421875\n    C 18.69140625,26.5546875 21.291015625,24.0625 24.556640625,24.0625\n    Z\n    M 11.408203125,24.0625\n    C 14.13671875,24.0625 16.392578125,25.888671875 16.392578125,28.7890625\n    C 16.392578125,31.5390625 14.5234375,33.34375 11.966796875,33.34375\n    C 10.65625,33.34375 9.646484375,32.828125 9.0234375,31.83984375\n    C 9.689453125,34.890625 11.98828125,36.888671875 15.125,37.0390625\n    C 15.94140625,37.08203125 16.54296875,37.662109375 16.54296875,38.478515625\n    C 16.54296875,39.466796875 15.7265625,39.982421875 14.673828125,39.982421875\n    C 9.818359375,39.982421875 5.54296875,35.857421875 5.54296875,30.421875\n    C 5.54296875,26.5546875 8.12109375,24.0625 11.408203125,24.0625\n    Z\n    M 34.998046875,36.716796875\n    L 47.115234375,36.716796875\n    C 48.017578125,36.716796875 48.76953125,37.42578125 48.76953125,38.349609375\n    C 48.76953125,39.251953125 48.017578125,39.9609375 47.115234375,39.9609375\n    L 34.998046875,39.9609375\n    C 34.095703125,39.9609375 33.38671875,39.251953125 33.38671875,38.349609375\n    C 33.38671875,37.42578125 34.095703125,36.716796875 34.998046875,36.716796875\n    Z\n    M 34.998046875,25.458984375\n    L 47.115234375,25.458984375\n    C 48.017578125,25.458984375 48.76953125,26.16796875 48.76953125,27.091796875\n    C 48.76953125,27.994140625 48.017578125,28.703125 47.115234375,28.703125\n    L 34.998046875,28.703125\n    C 34.095703125,28.703125 33.38671875,27.994140625 33.38671875,27.091796875\n    C 33.38671875,26.16796875 34.095703125,25.458984375 34.998046875,25.458984375\n    Z\n    M 7.08984375,14.201171875\n    L 47.115234375,14.201171875\n    C 48.017578125,14.201171875 48.76953125,14.931640625 48.76953125,15.833984375\n    C 48.76953125,16.736328125 48.017578125,17.4453125 47.115234375,17.4453125\n    L 7.08984375,17.4453125\n    C 6.1875,17.4453125 5.478515625,16.736328125 5.478515625,15.833984375\n    C 5.478515625,14.931640625 6.1875,14.201171875 7.08984375,14.201171875\n    Z\n    M 7.08984375,2.96484375\n    L 47.115234375,2.96484375\n    C 48.017578125,2.96484375 48.76953125,3.673828125 48.76953125,4.576171875\n    C 48.76953125,5.478515625 48.017578125,6.208984375 47.115234375,6.208984375\n    L 7.08984375,6.208984375\n    C 6.1875,6.208984375 5.478515625,5.478515625 5.478515625,4.576171875\n    C 5.478515625,3.673828125 6.1875,2.96484375 7.08984375,2.96484375\n    Z\n'/></g></svg>", "list.bullet": "<svg class='sym' viewBox='0 0 54.26953125 31.8828125'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-31.8828125)'><path fill-rule='nonzero' d='\n    M 8.185546875,26.25390625\n    C 9.689453125,26.25390625 10.892578125,27.45703125 10.892578125,28.939453125\n    C 10.892578125,30.443359375 9.689453125,31.646484375 8.185546875,31.646484375\n    C 6.681640625,31.646484375 5.478515625,30.443359375 5.478515625,28.939453125\n    C 5.478515625,27.45703125 6.681640625,26.25390625 8.185546875,26.25390625\n    Z\n    M 17.681640625,27.220703125\n    L 47.029296875,27.220703125\n    C 47.99609375,27.220703125 48.76953125,27.97265625 48.76953125,28.939453125\n    C 48.76953125,29.927734375 47.99609375,30.6796875 47.029296875,30.6796875\n    L 17.681640625,30.6796875\n    C 16.693359375,30.6796875 15.94140625,29.927734375 15.94140625,28.939453125\n    C 15.94140625,27.97265625 16.693359375,27.220703125 17.681640625,27.220703125\n    Z\n    M 8.185546875,13.255859375\n    C 9.689453125,13.255859375 10.892578125,14.458984375 10.892578125,15.962890625\n    C 10.892578125,17.466796875 9.689453125,18.669921875 8.185546875,18.669921875\n    C 6.681640625,18.669921875 5.478515625,17.466796875 5.478515625,15.962890625\n    C 5.478515625,14.458984375 6.681640625,13.255859375 8.185546875,13.255859375\n    Z\n    M 17.681640625,14.22265625\n    L 47.029296875,14.22265625\n    C 47.99609375,14.22265625 48.76953125,14.99609375 48.76953125,15.962890625\n    C 48.76953125,16.9296875 47.99609375,17.681640625 47.029296875,17.681640625\n    L 17.681640625,17.681640625\n    C 16.693359375,17.681640625 15.94140625,16.9296875 15.94140625,15.962890625\n    C 15.94140625,14.99609375 16.693359375,14.22265625 17.681640625,14.22265625\n    Z\n    M 8.185546875,0.2578125\n    C 9.689453125,0.2578125 10.892578125,1.482421875 10.892578125,2.96484375\n    C 10.892578125,4.46875 9.689453125,5.671875 8.185546875,5.671875\n    C 6.681640625,5.671875 5.478515625,4.46875 5.478515625,2.96484375\n    C 5.478515625,1.482421875 6.681640625,0.2578125 8.185546875,0.2578125\n    Z\n    M 17.681640625,1.24609375\n    L 47.029296875,1.24609375\n    C 47.99609375,1.24609375 48.76953125,1.998046875 48.76953125,2.96484375\n    C 48.76953125,3.953125 47.99609375,4.705078125 47.029296875,4.705078125\n    L 17.681640625,4.705078125\n    C 16.693359375,4.705078125 15.94140625,3.953125 15.94140625,2.96484375\n    C 15.94140625,1.998046875 16.693359375,1.24609375 17.681640625,1.24609375\n    Z\n'/></g></svg>", "hifispeaker.fill": "<svg class='sym' viewBox='0 0 48.232421875 69.953125'><g fill-rule='nonzero' transform='scale(1,-1) translate(0,-69.953125)'><path fill-rule='nonzero' d='\n    M 5.478515625,53.453125\n    L 5.478515625,16.521484375\n    C 5.478515625,12.009765625 7.712890625,9.775390625 12.138671875,9.775390625\n    L 36.072265625,9.775390625\n    C 40.498046875,9.775390625 42.732421875,12.009765625 42.732421875,16.521484375\n    L 42.732421875,53.453125\n    C 42.732421875,57.943359375 40.498046875,60.19921875 36.072265625,60.19921875\n    L 12.138671875,60.19921875\n    C 7.69140625,60.19921875 5.478515625,57.943359375 5.478515625,53.453125\n    Z\n    M 24.083984375,42.001953125\n    C 20.732421875,42.001953125 18.08984375,44.666015625 18.08984375,48.017578125\n    C 18.08984375,51.34765625 20.732421875,54.01171875 24.083984375,53.990234375\n    C 27.4140625,53.96875 30.056640625,51.34765625 30.078125,48.017578125\n    C 30.099609375,44.666015625 27.4140625,42.001953125 24.083984375,42.001953125\n    Z\n    M 24.10546875,44.923828125\n    C 25.802734375,44.923828125 27.19921875,46.3203125 27.19921875,48.017578125\n    C 27.19921875,49.71484375 25.759765625,51.068359375 24.10546875,51.068359375\n    C 22.38671875,51.068359375 21.01171875,49.736328125 21.01171875,48.017578125\n    C 21.01171875,46.3203125 22.408203125,44.923828125 24.10546875,44.923828125\n    Z\n    M 24.10546875,16.15625\n    C 18.111328125,16.15625 13.27734375,20.990234375 13.27734375,27.02734375\n    C 13.27734375,33.04296875 18.111328125,37.876953125 24.10546875,37.85546875\n    C 30.099609375,37.8125 34.93359375,33.04296875 34.93359375,27.02734375\n    C 34.93359375,20.990234375 30.099609375,16.15625 24.10546875,16.15625\n    Z\n    M 24.10546875,22.4296875\n    C 26.662109375,22.4296875 28.681640625,24.470703125 28.681640625,27.02734375\n    C 28.681640625,29.626953125 26.662109375,31.603515625 24.10546875,31.603515625\n    C 21.548828125,31.603515625 19.5078125,29.626953125 19.5078125,27.02734375\n    C 19.5078125,24.470703125 21.5703125,22.4296875 24.10546875,22.4296875\n    Z\n'/></g></svg>", "opticaldisc": "<svg class='sym' viewBox='0 0 24 24'><g fill='none' stroke='currentColor' stroke-width='1.9'><circle cx='12' cy='12' r='9.05'/><circle cx='12' cy='12' r='2.7'/></g></svg>"};
 const AM_NOTE=SYM['music.note'];
 let npReturnView='home';
+let amBackTarget=null;
+function amBack(){setView(amBackTarget||'library');}
 const AM_CONTENT=['home','browse','library','albums','artists'];
 const AM_CLASS={home:'view-home',browse:'view-browse',library:'view-library',albums:'view-albums',artists:'view-artists'};
 const _amSetView=setView;
 setView=function(v){
   if(AM_CONTENT.includes(v)){
+    const prevAm=AM_CONTENT.find(x=>document.body.classList.contains(AM_CLASS[x]));
+    if(prevAm&&prevAm!==v)amBackTarget=prevAm;
     document.body.classList.remove('view-player','view-library','view-home','view-browse','view-albums','view-artists');
     document.body.classList.add(AM_CLASS[v]);
     npReturnView=v;
@@ -6515,6 +6775,7 @@ setView=function(v){
     document.querySelectorAll('#tabbar .tab').forEach(b=>{const on=b.dataset.view==='library';b.classList.toggle('active',on);b.setAttribute('aria-selected',on?'true':'false');});
     moveGlide(true);
     updateMiniPlayer();
+    kawarpViewSync();
     return;
   }
   if(v==='player'){openNowPlaying();return;}
@@ -6723,7 +6984,7 @@ function kawarpFeed(k,cover){
   if(!k)return;
   try{
     if(cover){k.loadImage(cover).catch(()=>{});}
-    else k.loadGradient(kawarpPaletteColors(),135);
+    else k.loadGradient(['#08080a','#141419','#1f1f26'],135); /* no artwork: black, not pink */
   }catch(e){}
 }
 function kawarpRefresh(){
@@ -6735,19 +6996,29 @@ function kawarpRefresh(){
 }
 function kawarpCover(url){kwpCoverUrl=url||null;kawarpRefresh();}
 function kawarpPalette(){kawarpRefresh();}
+function kawarpCreateNP(){kwpNP=new Kawarp(document.getElementById('kwp-np'),{warpIntensity:.8,blurPasses:8,animationSpeed:.8,saturation:1.5,transitionDuration:1200,scale:1.18,tintColor:[.06,.06,.1],tintIntensity:.14,dithering:.008});kwpNP.start();}
+function kawarpCreateBG(){kwpBG=new Kawarp(document.getElementById('kwp-bg'),{warpIntensity:1,blurPasses:12,animationSpeed:.55,saturation:1.3,transitionDuration:1600,scale:1,tintColor:[.06,.06,.1],tintIntensity:.1,dithering:.008});kwpBG.start();}
+function kawarpEnsure(which){
+  if(!document.body.classList.contains('kawarp')||!KAWARP_OK)return;
+  if(which==='np'&&kwpNP)return;
+  if(which==='bg'&&kwpBG)return;
+  try{if(which==='np')kawarpCreateNP();else kawarpCreateBG();}
+  catch(e){if(which==='np')kwpNP=null;else kwpBG=null;
+    setTimeout(()=>{if(document.body.classList.contains('kawarp'))kawarpEnsure(which);},800);return;}
+  kawarpRefresh();
+}
 function kawarpToggle(on){
   const want=!!on&&KAWARP_OK;
   document.body.classList.toggle('kawarp',want);
-  if(want){
-    if(!kwpNP){try{kwpNP=new Kawarp(document.getElementById('kwp-np'),{warpIntensity:.8,blurPasses:8,animationSpeed:.8,saturation:1.5,transitionDuration:1200,scale:1.18,tintColor:[.06,.06,.1],tintIntensity:.14,dithering:.008});kwpNP.start();}catch(e){kwpNP=null;}}
-    if(!kwpBG){try{kwpBG=new Kawarp(document.getElementById('kwp-bg'),{warpIntensity:1,blurPasses:12,animationSpeed:.55,saturation:1.3,transitionDuration:1600,scale:1,tintColor:[.06,.06,.1],tintIntensity:.1,dithering:.008});kwpBG.start();}catch(e){kwpBG=null;}}
-    kawarpRefresh();
-    kawarpViewSync();
-  }else{
-    for(const k of [kwpNP,kwpBG]){try{k&&k.dispose();}catch(e){}}
-    kwpNP=null;kwpBG=null;
-  }
+  if(want){kawarpEnsure('np');kawarpEnsure('bg');kawarpRefresh();kawarpViewSync();}
+  else{for(const k of [kwpNP,kwpBG]){try{k&&k.dispose();}catch(e){}}kwpNP=null;kwpBG=null;}
 }
+for(const _cid of ['kwp-np','kwp-bg']){const _cc=document.getElementById(_cid);if(_cc){
+  _cc.addEventListener('webglcontextlost',e=>{e.preventDefault();const which=_cid==='kwp-np'?'np':'bg';
+    try{if(which==='np'&&kwpNP)kwpNP.dispose();if(which==='bg'&&kwpBG)kwpBG.dispose();}catch(_){}
+    if(which==='np')kwpNP=null;else kwpBG=null;},false);
+  _cc.addEventListener('webglcontextrestored',()=>{setTimeout(()=>kawarpEnsure(_cid==='kwp-np'?'np':'bg'),150);},false);
+}}
 const APP_HIDDEN_VIEWS=['view-home','view-browse','view-library','view-albums','view-artists'];
 function kawarpViewSync(){
   if(!document.body.classList.contains('kawarp'))return;
@@ -6761,5 +7032,5 @@ addEventListener('resize',()=>{try{kwpNP&&kwpNP.resize();kwpBG&&kwpBG.resize();}
 (function(){const b=document.getElementById('bg-animated');if(!b)return;b.checked=KAWARP_OK;if(KAWARP_OK)kawarpToggle(true);})();
 
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4f1c34c0dd0ef3e',t:'MTc5Mjc2OTIxNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
