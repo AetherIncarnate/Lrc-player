@@ -1007,7 +1007,7 @@ body.spicy #right{container-type:inline-size;mask-image:linear-gradient(to botto
    sweep (angle 180deg) · scale 1.05 active · opacity .25s cubic-bezier(.61,1,.88,1) ·
    scale .1s cubic-bezier(.37,0,.63,1) · syllable gap 0.3ch · interlude dots 2×gap ·
    hover → active opacity · will-change + contain layout paint */
-body.spicy .lrc-line{padding:0;margin:1cqw 0;text-align:left!important;transform-origin:left center;
+body.spicy .lrc-line{padding:0;margin:1cqw 0;
   line-height:1.1818181818;opacity:.51;will-change:transform,opacity;contain:layout paint;
   transition:opacity .25s cubic-bezier(.61,1,.88,1),scale .1s cubic-bezier(.37,0,.63,1);
   background-image:linear-gradient(180deg,rgba(255,255,255,.85) var(--gp,0%),rgba(255,255,255,.4) calc(var(--gp,0%) + 20%));
@@ -1018,7 +1018,7 @@ body.spicy .lrc-line.state-far{opacity:.16}
 body.spicy .lrc-line.state-sung{opacity:.497}
 body.spicy .lrc-line.state-cur{opacity:1;scale:1.05;text-shadow:0 0 24px rgba(255,255,255,.28)}
 body.spicy .lrc-line:hover{opacity:1}
-body.spicy .lrc-line .words-row{justify-content:flex-start!important;flex-wrap:wrap;row-gap:.6cqw}
+body.spicy .lrc-line .words-row{row-gap:.6cqw}
 body.spicy .lrc-word{font-size:calc(clamp(1.85rem,7cqw,3.5rem)*var(--lyric-scale,1));font-weight:700;
   line-height:1.1818181818;letter-spacing:0em;margin:0 .3ch 0 0;padding:0;transform:none;animation:none;transition:none;cursor:pointer}
 body.spicy .lrc-word .w-dim,body.spicy .lrc-word .w-bright{display:block;color:transparent;-webkit-text-fill-color:transparent;background:none;background-image:none!important;clip-path:none!important;text-shadow:none}
@@ -1026,9 +1026,41 @@ body.spicy .lrc-word:active{transform:scale(.96)}
 body.spicy .metro-letters{display:none}
 body.spicy .vtag{display:none}
 .spicy-break{display:none}
-body.spicy .spicy-break{display:flex;justify-content:flex-start;align-items:center;
-  gap:clamp(0.3rem,1.7cqw,0.8rem);margin:1cqw 0 1cqw calc(clamp(0.3rem,1.7cqw,0.8rem)*1.1);opacity:.5}
+body.spicy .spicy-break{display:flex;justify-content:center;align-items:center;
+  gap:clamp(0.3rem,1.7cqw,0.8rem);margin:1cqw 0;opacity:.5}
 body.spicy .spicy-break i{width:calc(2*clamp(0.3rem,1.7cqw,0.8rem));height:calc(2*clamp(0.3rem,1.7cqw,0.8rem));border-radius:100rem;background:rgba(255,255,255,.85)}
+/* ═══ v52 · AM Lyrics — 1:1 port of binimum/am-lyrics (Apple Music word-by-word) ═══
+   Tokens: base 34px bold · line-height 1.2 · line-spacing 25px · dim = 45% transparent
+   inactive scale .98 · blur .035em near / .07em far · wipe feather 30px · lift -1.12px
+   highlight pill rgba(255,255,255,.08) r16 · gap dots .4em/.08em 4s breath · bg .65em */
+body.am .lrc-line{padding:0 10px;margin:0 0 25px;text-align:left!important;transform-origin:left center;
+  opacity:.8;transition:opacity .7s ease,transform .4s cubic-bezier(.41,0,.12,.99),filter .7s ease}
+body.am .lrc-word{font-size:calc(34px*var(--lyric-scale,1));font-weight:700;letter-spacing:-.01em;line-height:1.2}
+body.am .lrc-word .w-dim{color:rgba(255,255,255,.55)}
+body.am .state-cur{opacity:1;transform:scale(1);filter:none;isolation:isolate}
+body.am .state-cur::before{content:'';position:absolute;z-index:-1;inset:-6px -8px;border-radius:16px;background:rgba(255,255,255,.08)}
+body.am .state-p1,body.am .state-n1{opacity:.8;filter:blur(.035em);transform:scale(.98)}
+body.am .state-p2,body.am .state-n2{opacity:.6;filter:blur(.07em);transform:scale(.98)}
+body.am .state-far{opacity:.4;filter:blur(.07em);transform:scale(.98)}
+body.am .lrc-line.state-sung .w-dim{color:rgba(255,255,255,.55)}
+body.am .lrc-line.state-sung .w-bright{opacity:0}
+body.am .lrc-word.sung{animation:none}
+body.am .lrc-word.sung .w-bright{clip-path:inset(0 100% 0 0)!important}
+body.am .lrc-line.am-fading .w-bright{opacity:1!important;-webkit-text-fill-color:#fff!important;background:none!important;clip-path:none!important}
+/* word wipe: feathered leading edge sweeping left→right over the word's duration */
+body.am .lrc-word .w-bright{clip-path:none;will-change:background-size;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  background-image:linear-gradient(90deg,#fff 0%,#fff calc(100% - 30px),#fff0 100%);
+  background-repeat:no-repeat;background-size:0% 100%;background-position:left center}
+body.am .lrc-word.am-started{transform:translateY(-1.12px)}
+body.am .lrc-word.am-wiping .w-bright{animation:amwipe var(--am-dur,300ms) linear var(--am-delay,0ms) forwards}
+body.am .lrc-word.am-done .w-bright{animation:none;-webkit-text-fill-color:#fff;background:none}
+@keyframes amwipe{from{background-size:0% 100%}to{background-size:calc(100% + 30px) 100%}}
+/* gap dots (component: .4em, .08em gap, 4s breath .85→1.12) */
+body.am .spicy-break{display:flex;justify-content:flex-start;align-items:center;gap:.08em;margin:8px 0 8px 2px;opacity:.5}
+body.am .spicy-break i{width:.4em;height:.4em;border-radius:100%;background:rgba(255,255,255,.6);animation:ampulse 4s ease-in-out infinite}
+@keyframes ampulse{0%,100%{transform:scale(.85);opacity:.5}50%{transform:scale(1.12);opacity:1}}
+body.am .vtag{display:none}
 /* end-of-lyrics credit (v50) */
 .lrc-footer{margin-top:2.5cqw;padding-top:1.2cqw;display:flex;flex-direction:column;gap:.3em;pointer-events:none}
 .lrc-footer .lrc-by{font-size:calc(clamp(1.05rem,2.4cqw,1.4rem)*var(--lyric-scale,1));font-weight:700;color:rgba(255,255,255,.8);-webkit-text-fill-color:rgba(255,255,255,.8)}
@@ -1050,11 +1082,7 @@ body.spicy .spicy-break i{width:calc(2*clamp(0.3rem,1.7cqw,0.8rem));height:calc(
   .am-np .lrc-word{font-size:calc(clamp(1.6rem,4.6cqw,2.3rem)*var(--lyric-scale,1))}
   body.spicy .lrc-word{font-size:calc(clamp(1.85rem,7cqw,3.5rem)*var(--lyric-scale,1))}
 }
-@media(min-width:880px){
-  /* v49 · spicy matches the reference: lyrics left, art card bottom-right */
-  body.spicy #app.am-np{flex-direction:row-reverse!important}
-  body.spicy #app.am-np #left{flex:0 0 36%;width:36%;justify-content:flex-end!important}
-}
+/* v52 · spicy keeps the NORMAL layout (art left / lyrics right) — no left shift */
 @media(min-width:880px) and (max-height:840px){
   #app.am-np #art-wrap{width:min(46vh,330px)}
   #app.am-np #left{gap:12px!important;padding:56px 30px 14px!important}
@@ -2859,7 +2887,7 @@ above as far as the program is concerned.
       </details>
       <div class="lookup-actions"><button class="load-btn" onclick="findLyrics(true)">Find / retry</button><button class="load-btn" onclick="cancelLookup();setLookupStatus('Stopped. Any loaded lyrics are kept.')">Stop</button></div>
       <div id="lookup-status" role="status" aria-live="polite">Waiting for a track</div>
-      <label>Effects <select aria-label="Lyric effects" onchange="setLyricStyle(this.value)"><option value="spicy">Spicy lyrics</option><option value="metro" selected>Metro lyrics</option><option value="stage">Stage ✦</option><option value="classic">Classic</option><option value="calm">Calm</option></select></label>
+      <label>Effects <select aria-label="Lyric effects" onchange="setLyricStyle(this.value)"><option value="spicy">Spicy lyrics</option><option value="metro" selected>Metro lyrics</option><option value="am">AM lyrics</option><option value="stage">Stage ✦</option><option value="classic">Classic</option><option value="calm">Calm</option></select></label>
     <details class="source-options"><summary>Lyric sources &amp; availability</summary>
       <p>Automatic search ranks Syllable-synced → Line by line → Plain. Lower-quality results are held until all enabled sources have been tried. Line-only lyrics never use invented word timing. Turn sources on or off below. Each request times out; Stop cancels the entire search.</p>
       <div id="provider-list"></div>
@@ -5318,7 +5346,7 @@ requestAnimationFrame(()=>moveGlide(true));
 window.addEventListener('resize',()=>moveGlide(true));
 function startRaf(){
   if(rafId)cancelAnimationFrame(rafId);
-  (function loop(){syncFrame();rafId=requestAnimationFrame(loop);})();
+  (function loop(){try{syncFrame();}catch(e){if(!window.__sfErr){window.__sfErr=String((e&&e.message)||e);}}rafId=requestAnimationFrame(loop);})();
 }
 function lineState(dist){
   if(dist===0)return 'state-cur';
@@ -5332,6 +5360,7 @@ const ALL_STATES=['state-cur','state-p1','state-p2','state-n1','state-n2','state
 function syncFrame(){
   const mediaTime=AUD.currentTime;
   const SPICY=document.body.classList.contains('spicy');
+  const AM=document.body.classList.contains('am');
   updateBeatVisuals(mediaTime);
   const t=mediaTime-lyricDelay;
   if(AUD.duration){
@@ -5355,6 +5384,10 @@ function syncFrame(){
     el.classList.toggle('state-sung',!live.has(i)&&dist<0);
   });
   if(active!==lastActive){
+    if(AM&&lastActive>=0){const pl=document.querySelector(`.lrc-line[data-i="${lastActive}"]`);
+      if(pl){pl.classList.add('am-fading');
+        const _ws=[...pl.querySelectorAll('.lrc-word.am-wiping,.lrc-word.am-done')];
+        setTimeout(()=>{pl.classList.remove('am-fading');_ws.forEach(wd=>{wd.classList.remove('am-wiping','am-done','am-started');wd.style.removeProperty('--am-dur');wd.style.removeProperty('--am-delay');});},750);}}
     lastActive=active;
     if(reducedMotion.matches&&active>=0&&Date.now()>=manualScrollUntil){
       const el=document.querySelector(`.lrc-line[data-i="${active}"]`);
@@ -5375,7 +5408,8 @@ function syncFrame(){
           const lineEl=document.querySelector(`.lrc-line[data-i="${li}"]`);
           if(lineEl){
             const nx=lines[li+1];
-            const lastE=line.words[line.words.length-1].e;
+            const _lw=line.words[line.words.length-1];
+            const lastE=_lw?_lw.e:line.time+1.5;
             const end=nx?nx.time:line.time+Math.max(1.5,(lastE-line.time)*1.25);
             let p;
             if(t<line.time)p=0;
@@ -5383,6 +5417,20 @@ function syncFrame(){
             else p=(t-line.time)/Math.max(0.001,end-line.time)*104;
             lineEl.style.setProperty('--gp',p.toFixed(2)+'%');
           }
+        }
+        return;
+      }
+      if(AM){
+        /* v52 · AM lyrics (binimum/am-lyrics 1:1): each word wipes bright over its own duration */
+        if(typeof w.s!=='number'||typeof w.e!=='number')return;
+        const prevE=wi>0&&typeof line.words[wi-1].e==='number'?line.words[wi-1].e:line.time;
+        const preW=(w.s-prevE)<0.18?0.1:0;
+        const start=w.s-preW;
+        if(t>=w.e+0.06){sp.classList.add('am-started','am-done');}
+        else if(t>=start&&!sp.classList.contains('am-wiping')&&!sp.classList.contains('am-done')){
+          sp.style.setProperty('--am-dur',Math.min(1200,Math.max(80,(w.e-start)*1000)).toFixed(0)+'ms');
+          sp.style.setProperty('--am-delay',Math.max(0,(start-t)*1000).toFixed(0)+'ms');
+          sp.classList.add('am-started','am-wiping');
         }
         return;
       }
@@ -5457,16 +5505,19 @@ function updateHoldBlur(t){
 let manualScrollUntil=0;
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 function setLyricStyle(value){
-  for(const name of ['metro','spicy','flashy','calm'])document.body.classList.remove(name);
+  for(const name of ['metro','spicy','flashy','calm','am'])document.body.classList.remove(name);
   if(value==='metro')document.body.classList.add('metro');
   if(value==='spicy')document.body.classList.add('spicy');
   if(value==='stage')document.body.classList.add('flashy');
   if(value==='calm')document.body.classList.add('calm');
+  if(value==='am')document.body.classList.add('am');
+  if(value!=='am'){document.querySelectorAll('.lrc-line.am-fading').forEach(l=>l.classList.remove('am-fading'));
+    document.querySelectorAll('.lrc-word.am-wiping,.lrc-word.am-done,.lrc-word.am-started').forEach(wd=>{wd.classList.remove('am-wiping','am-done','am-started');wd.style.removeProperty('--am-dur');wd.style.removeProperty('--am-delay');});}
   lastActive=-1;glideCooldownUntil=0;syncFrame();
 }
 function lyricLineTarget(el,panel){
   const y=el.getBoundingClientRect().top-panel.getBoundingClientRect().top+panel.scrollTop;
-  const frac=document.body.classList.contains('spicy')?.52:.5;
+  const frac=document.body.classList.contains('am')?.22:(document.body.classList.contains('spicy')?.52:.5);
   return Math.max(0,y-panel.clientHeight*frac+el.clientHeight/2);
 }
 function scrollLyric(el){
@@ -7611,5 +7662,5 @@ document.addEventListener('pointerdown',()=>{if(document.body.classList.contains
 })();  </script>
 
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4fc2925ec601237',t:'MTc5Mjg3ODI0NA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
